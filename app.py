@@ -20,7 +20,9 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 @app.route("/")
 def index():
     if not session.get("user"):
-        return redirect(url_for("login"))
+       return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
+    print("Session user details are",session["user"].get("preferred_username"))
+    
     return render_template('index.html', user=session["user"], version=msal.__version__)
 
 @app.route("/login")
@@ -46,6 +48,7 @@ def authorized():
 
 @app.route("/logout")
 def logout():
+    session["users"]=[]
     session.clear()  # Wipe out user and its token cache from session
     return redirect(  # Also logout from your tenant's web session
         app_config.AUTHORITY + "/oauth2/v2.0/logout" +
