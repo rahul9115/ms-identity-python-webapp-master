@@ -1,0 +1,39 @@
+.huge{
+    font-size: 40px;
+    line-height: normal;
+}
+
+.panel-green{
+    border-color: #079c07;
+}
+
+.panel-green>.panel-heading{
+    color: #ffffff;
+    background-color: #11ca11;
+}
+
+.panel-green>a{
+    color: #5cd85c;
+}
+
+.panel-green>a:hover{
+    color: #3d8c3d;
+}
+
+
+.panel-blue{
+    border-color: #337AB7;
+}
+
+.panel-blue>.panel-heading{
+    color: #ffffff;
+    background-color: #337AB7;
+}
+
+.panel-blue>a{
+    color: #337AB7;
+}
+
+.panel-blue>a:hover{
+    color: #337AB7;
+}
