@@ -20,6 +20,7 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 @app.route("/")
 def index():
     if not session.get("user"):
+       session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
        return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
     print("Session user details of",session["user"])
     name=session["user"].get("name")
@@ -50,10 +51,13 @@ def authorized():
 @app.route("/logout")
 def logout():
     session["users"]=[]
-    session.clear()  # Wipe out user and its token cache from session
-    return redirect(  # Also logout from your tenant's web session
-        app_config.AUTHORITY + "/oauth2/v2.0/logout" +
-        "?post_logout_redirect_uri=" + url_for("index", _external=True))
+    session.clear() # Wipe out user and its token cache from session
+    print("This",url_for("index",_external=True))
+    return redirect(url_for("index"))
+    # return redirect(  # Also logout from your tenant's web session
+    #     app_config.AUTHORITY + "/oauth2/v2.0/logout" +
+    #     "?post_logout_redirect_uri=" + url_for("index", _external=True))
+    
 
 @app.route("/graphcall")
 def graphcall():
