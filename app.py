@@ -21,7 +21,7 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 def index():
     if not session.get("user"):
        return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
-    print("Session user details of",)
+    print("Session user details of",session["user"])
     name=session["user"].get("name")
     
     return render_template("after.html", user=(name.split(" "))[0], version=msal.__version__)
