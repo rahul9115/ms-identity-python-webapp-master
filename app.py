@@ -58,6 +58,7 @@ def insert():
             
             
         else:
+            conn = sqlite3.connect("database.db")
             print("in")
             emp_id=request.form.get("Emp_ID")
             fname=request.form.get("fname")
@@ -69,6 +70,10 @@ def insert():
             gender=request.form.get("gender")
             print("gender,address",gender,address)
             name=session["user"].get("name")
+            cur = conn.cursor()
+            cur.execute(f"INSERT INTO Employee VALUES({emp_id},'{fname}','{lname}','{desig}','{email}',{mobile},'{address}','True','False',1)")
+            conn.commit()
+            print("Executed")
             return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__)
         
         
