@@ -17,6 +17,7 @@
       <!-- {% endfor %} -->
       <!-- {% endif %} -->
       <!-- {% endwith %} -->
+      
       <div class="card card-body">
         <form action="{{ url_for('insert')}}" method="POST">
           <div class="form-group">
@@ -29,7 +30,7 @@
             <input type="text" class="form-control" name="lname" placeholder="Last Name">
           </div>
           <div class="form-group">
-            <label for="">Designation</label>
+            
             <select style="height: 40px;" name="desig" id="cars" class="form-control" aria-placeholder="Designation">
               <option disabled="disabled" selected="selected" >Choose Designation</option>    
               <option value="P1">P1</option>
@@ -60,10 +61,11 @@
             <input type="text" class="form-control" name="address" placeholder="Address">
           </div>
 
-       
+          <div class="form-group">
           <button type="submit" class="btn btn-primary btn-block">
             Save 
           </button>
+          </div>
         </form>
       </div>
     </div>

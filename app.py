@@ -24,7 +24,7 @@ def index():
     if not session.get("user"):
        session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
        return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
-    print("Session user details of",session["user"])
+    
     name=session["user"].get("name")
     
     return render_template("after.html", user=(name.split(" "))[0], version=msal.__version__)
@@ -33,7 +33,7 @@ def search():
     if not session.get("user"):
        session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
        return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
-    print("Session user details of",session["user"])
+    
     name=session["user"].get("name")
     
     return render_template("search_colab.html", user=(name.split(" "))[0], version=msal.__version__)
@@ -42,21 +42,23 @@ def crud():
     if not session.get("user"):
        session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
        return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
-    print("Session user details of",session["user"])
+    
     name=session["user"].get("name")
     
     return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__)
 #for inserting
-@app.route("/crud",methods=["POST","GET"])
+@app.route("/crud1",methods=["POST","GET"])
 def insert():
+    print("good work")
     if request.method=="POST":
 
         if not session.get("user"):
             session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
             return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
-            print("Session user details of",session["user"])
-            name=session["user"].get("name")
+            
+            
         else:
+            print("in")
             emp_id=request.form.get("Emp_ID")
             fname=request.form.get("fname")
             lname=request.form.get("lname")
@@ -65,12 +67,14 @@ def insert():
             mobile=request.form.get("mobile")
             address=request.form.get("address")
             gender=request.form.get("gender")
-            session["email"].append(email)
-
+            print("gender,address",gender,address)
+            name=session["user"].get("name")
+            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__)
         
-        return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__)
+        
 @app.route("/crud",methods=["POST","GET"])
 def seuser():
+    print("in")
     if request.method=="POST":
         if not session.get("user"):
             session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
