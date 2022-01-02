@@ -35,7 +35,7 @@ def search():
     name=session["user"].get("name")
     
     return render_template("search_colab.html", user=(name.split(" "))[0], version=msal.__version__)
-@app.route("/crud")
+@app.route("/crud",methods=["POST","GET"])
 def crud():
     if not session.get("user"):
        session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
@@ -44,6 +44,17 @@ def crud():
     name=session["user"].get("name")
     
     return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__)
+@app.route("/crud",methods=["POST","GET"])
+def seuser():
+    if request.method=="POST":
+        if not session.get("user"):
+            session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
+            return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
+            print("Session user details of",session["user"])
+            name=session["user"].get("name")
+        
+        return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__)
+
 
 
 @app.route("/login")

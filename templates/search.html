@@ -10,14 +10,27 @@
     <link href="{{ url_for('static',filename='../static/search/css/main.css')}}" rel="stylesheet" />
   </head>
   <body>
+    <form action="{{ url_for('seuser')}}" class="priceOptionForm" method="post">
     <div class="container">
       <div class="row height d-flex justify-content-center align-items-center">
           <div class="col-md-6">
-              <div class="form"> <i class="fa fa-search"></i> <input type="text" class="form-control form-input" placeholder="Search anything..."> <span class="left-pan"><i class="fa fa-microphone"></i></span> </div>
+              <div class="form"> <i class="fa fa-search"></i> <input id="email" type="text" name="input" class="form-control form-input" placeholder="Enter Emp_ID or Email"> <span class="left-pan"><i class="fa fa-microphone"></i></span> </div>
           </div>
       </div>
   </div>
+</form>
   </body><!-- This templates was made by Colorlib (https://colorlib.com) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script>
+    function submitForm(){
+    document.priceOptionForm.submit();
+    document.priceOptionForm.method='post';
+}
+    document.getElementById('email').onkeydown = function(e){
+   if(e.keyCode == 13){
+     submitForm();
+   }
+};
+  </script>
 </html>
