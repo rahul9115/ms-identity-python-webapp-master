@@ -4,6 +4,8 @@ from flask import Flask, render_template, session, request, redirect, url_for
 from flask_session import Session  # https://pythonhosted.org/Flask-Session
 import msal
 import app_config
+import sqlite3
+con=sqlite3.connect("database.db")
 
 
 app = Flask(__name__)
