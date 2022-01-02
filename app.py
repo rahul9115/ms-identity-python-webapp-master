@@ -91,7 +91,7 @@ def edit(id):
             for i in values:
                 data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
             return render_template("edit.html",list=data)
-@app.route("/edit",methods=["POST","GET"])
+@app.route("/update/<id>",methods=["POST","GET"])
 def edit(id):
     if request.method=="POST":
         if not session.get("user"):
@@ -100,7 +100,27 @@ def edit(id):
         else:
             conn = sqlite3.connect("database.db")
             cur=conn.cursor()
-            cur.execute(f"select * from Employee where Emp_ID={id}")
+            
+            emp_id=request.form.get("Emp_ID")
+            fname=request.form.get("fname")
+            lname=request.form.get("lname")
+            desig=request.form.get("desig")
+            email=request.form.get("email")
+            mobile=request.form.get("mobile")
+            address=request.form.get("address")
+            gender=request.form.get("gender")
+            cur.execute(f"""
+            update Employee
+            set emp_id={emp_id},
+                first_name={fname},
+                last_name={lname},
+                designation={desig},
+                email={email},
+                mobile={mobile},
+                address={address},
+                
+            where Emp_ID={id}
+            """)
             data=[]
             name=session["user"].get("name")
             return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,lsit=data,value="hidden")
