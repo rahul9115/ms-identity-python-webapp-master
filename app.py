@@ -45,7 +45,7 @@ def crud():
     
     name=session["user"].get("name")
     
-    return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__)
+    return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,value="hidden")
 #for inserting
 @app.route("/crud1",methods=["POST","GET"])
 def insert():
@@ -74,7 +74,7 @@ def insert():
             cur.execute(f"INSERT INTO Employee VALUES({emp_id},'{fname}','{lname}','{desig}','{email}',{mobile},'{address}','True','False',1)")
             conn.commit()
             print("Executed")
-            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__)
+            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,value="hidden")
         
         
 @app.route("/crud2",methods=["POST","GET"])
@@ -99,7 +99,7 @@ def seuser():
                     for i in values:
                         list1=list(i)
                 name=session["user"].get("name")
-                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1)
+                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
                     
             except:
                 
@@ -108,7 +108,7 @@ def seuser():
                 name=session["user"].get("name")
                 for i in values:
                     list1=list(i)
-                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1)
+                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
                 
 
             name=session["user"].get("name")
