@@ -18,7 +18,7 @@
       <!-- {% endif %} -->
       <!-- {% endwith %} -->
       <div class="card card-body">
-        <form action="" method="POST">
+        <form action="{{ url_for('insert')}}" method="POST">
           <div class="form-group">
             <input type="number" class="form-control" name="Emp_ID" placeholder="Emp_ID">
           </div>
@@ -29,8 +29,9 @@
             <input type="text" class="form-control" name="lname" placeholder="Last Name">
           </div>
           <div class="form-group">
-            <select name="desig" id="cars" class="form-control" >
-              <option value="none"></option>    
+            <label for="">Designation</label>
+            <select style="height: 40px;" name="desig" id="cars" class="form-control" aria-placeholder="Designation">
+              <option disabled="disabled" selected="selected" >Choose Designation</option>    
               <option value="P1">P1</option>
               <option value="P2">P2</option>
               <option value="P3">P3</option>
@@ -48,11 +49,19 @@
             <input type="number" class="form-control" name="mobile" placeholder="Mobile">
           </div>
           <div class="form-group">
+            <select style="height: 40px;" name="gender" class="form-control" required>
+              <option  disabled="disabled" selected="selected" >Choose gender</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Others</option>
+          </select>
+          </div>
+          <div class="form-group">
             <input type="text" class="form-control" name="address" placeholder="Address">
           </div>
 
        
-          <button class="btn btn-primary btn-block">
+          <button type="submit" class="btn btn-primary btn-block">
             Save 
           </button>
         </form>
