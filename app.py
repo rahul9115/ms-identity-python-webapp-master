@@ -78,7 +78,7 @@ def insert():
             return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,lsit=data,value="hidden")
         
 @app.route("/edit/<id>",methods=["POST","GET"])
-def update(id):
+def edit(id):
     if request.method=="POST":
 
         if not session.get("user"):
@@ -91,6 +91,21 @@ def update(id):
             for i in values:
                 data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
             return render_template("edit.html",list=data)
+@app.route("/edit",methods=["POST","GET"])
+def edit(id):
+    if request.method=="POST":
+        if not session.get("user"):
+            session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
+            return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
+        else:
+            conn = sqlite3.connect("database.db")
+            cur=conn.cursor()
+            cur.execute(f"select * from Employee where Emp_ID={id}")
+            data=[]
+            name=session["user"].get("name")
+            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,lsit=data,value="hidden")
+            
+
 
 
             
