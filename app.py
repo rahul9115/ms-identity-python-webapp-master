@@ -44,8 +44,8 @@ def crud():
        return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
     
     name=session["user"].get("name")
-    
-    return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,value="hidden")
+    data=[]
+    return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="hidden")
 #for inserting
 @app.route("/crud1",methods=["POST","GET"])
 def insert():
@@ -74,7 +74,8 @@ def insert():
             cur.execute(f"INSERT INTO Employee VALUES({emp_id},'{fname}','{lname}','{desig}','{email}',{mobile},'{address}','True','False',1)")
             conn.commit()
             print("Executed")
-            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,value="hidden")
+            data=[]
+            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,lsit=data,value="hidden")
         
         
 @app.route("/crud2",methods=["POST","GET"])
@@ -90,6 +91,7 @@ def seuser():
             search=search.strip()
             print("search",search)
             list1=[]
+            data={"EMP_ID":0,"first_name":"","last_name":"","designation":"","email":"","mobile":0,"address":"","is_enabled":"","is_admin":"","pass_id":""}
             try:
                 if(int(search)):
                     
@@ -97,18 +99,20 @@ def seuser():
                     values=cur.execute(f"select * from Employee where Emp_ID={int(search)}")
                     
                     for i in values:
-                        list1=list(i)
-                name=session["user"].get("name")
-                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
+                        data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
+
+                    print(data)
+                    name=session["user"].get("name")
+                    return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="visible")
                     
             except:
                 
                 cur=con.cursor()
-                values=cur.execute(f"select * from Employee where email={search}")
+                cur.execute(f"select * from Employee where email={search}")
+                data=cur.fetchall()
                 name=session["user"].get("name")
-                for i in values:
-                    list1=list(i)
-                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
+                
+                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="visible")
                 
 
             name=session["user"].get("name")
