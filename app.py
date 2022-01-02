@@ -89,18 +89,26 @@ def seuser():
             search=request.form.get("input")
             search=search.strip()
             print("search",search)
+            list1=[]
             try:
                 if(int(search)):
-                    list=[]
+                    
                     cur=con.cursor()
                     values=cur.execute(f"select * from Employee where Emp_ID={int(search)}")
+                    
                     for i in values:
-                        list.append(i)
+                        list1=list(i)
+                name=session["user"].get("name")
+                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1)
                     
             except:
                 
                 cur=con.cursor()
                 values=cur.execute(f"select * from Employee where email={search}")
+                name=session["user"].get("name")
+                for i in values:
+                    list1=list(i)
+                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1)
                 
 
             name=session["user"].get("name")

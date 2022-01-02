@@ -84,18 +84,18 @@
           </tr>
         </thead>
         <tbody>
-          <!-- {% for data in employee %} -->
+         
           <tr>
-   <!-- <td>{{data.id}}</td>
-            <td>{{data.name}}</td>
-            <td>{{data.email}}</td>
-            <td>{{data.phone}}</td> -->
+            {% for data in list %}
+            <td>{{data}}</td>
+           
+            {% endfor %}
             <td width="130">
-              <a href="/edit/{{data.id}}" class="btn btn-secondary btn-sm">edit</a>
-              <a href="/delete/{{data.id}}" class="btn btn-danger btn-delete btn-sm">delete</a>
+              <a href="" class="btn btn-secondary btn-sm">edit</a>
+              <a href="" class="btn btn-danger btn-delete btn-sm">delete</a>
             </td>
           </tr>
-          {% endfor %}
+          
         </tbody>
       </table>
     </div>
