@@ -77,17 +77,34 @@ def insert():
             return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__)
         
         
-@app.route("/crud",methods=["POST","GET"])
+@app.route("/crud2",methods=["POST","GET"])
 def seuser():
     print("in")
     if request.method=="POST":
         if not session.get("user"):
             session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
             return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
-            print("Session user details of",session["user"])
+        else:
+            con = sqlite3.connect("database.db")
+            search=request.form.get("input")
+            search=search.strip()
+            print("search",search)
+            try:
+                if(int(search)):
+                    list=[]
+                    cur=con.cursor()
+                    values=cur.execute(f"select * from Employee where Emp_ID={int(search)}")
+                    for i in values:
+                        list.append(i)
+                    
+            except:
+                
+                cur=con.cursor()
+                values=cur.execute(f"select * from Employee where email={search}")
+                
+
             name=session["user"].get("name")
-        
-        return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__)
+            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__)
 
 
 
