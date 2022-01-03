@@ -284,7 +284,7 @@ def delete_group(group_id,emp_id):
         conn.commit()
         data=[]
         name=session["user"].get("name")
-        return render_template("group_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="hidden")
+        return redirect(url_for("group"))
 
 
     
@@ -499,6 +499,11 @@ def segroup():
                     values=cur.execute(f"select group_id from group_table where group_name='{search}'")
                     if(len(values.fetchall())==0):
                         raise "exception"
+                    con.close()
+                    con = sqlite3.connect("database.db")
+                    cur=con.cursor()
+                    values=cur.execute(f"select group_id from group_table where group_name='{search}'")
+                    
                     group_id=0
                     for i in values:
                         group_id=i[0]
