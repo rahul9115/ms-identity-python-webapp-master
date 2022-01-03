@@ -19,7 +19,7 @@
       <!-- {% endwith %} -->
       
       <div class="card card-body">
-        <form action="{{ url_for('insert')}}" method="POST">
+        <form action="/group" method="POST">
           <div class="form-group">
             <input type="number" class="form-control" name="Emp_ID" placeholder="Emp_ID">
           </div>
@@ -54,6 +54,7 @@
             <td>EMP_ID</td>
             <td>Group_ID</td>
             <td>Group_Name</td>
+            <td>Action</td>
             
           </tr>
         </thead>
@@ -64,7 +65,7 @@
             
             <td>{{list1.EMP_ID}}</td>
             <td>{{list1.Group_ID}}</td>
-            <td>{{list.Group_name}}</td>
+            <td>{{list1.Group_name}}</td>
             
            
             <td width="50%" style="visibility: {{ value }};" >

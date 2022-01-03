@@ -111,10 +111,10 @@ def group():
             print("emp_id,group_name",group_name,emp_id)
             name=session["user"].get("name")
             cur = conn.cursor()
-            values=cur.execute(f"select group_id from group_table where group_name={group_name}")
+            values=cur.execute(f"select group_id from group_table where group_name='{group_name}'")
             for i in values:
                 group_id=i[0]
-            con.close()
+            conn.close()
             conn = sqlite3.connect("database.db")
             cur = conn.cursor()
             cur.execute(f"INSERT INTO Employee_group_map VALUES({emp_id},{group_id})")
@@ -124,9 +124,11 @@ def group():
             cur = conn.cursor()
             values=cur.execute(f"select * from employee_group_map")
             list1=[]
+            print("group_name: ",group_name)
             for i in values:
                 data={"EMP_ID":i[0],"Group_ID":i[1],"Group_name":group_name}
                 list1.append(data)
+            print(data)
             conn.commit()
             conn.close()
                      
@@ -142,12 +144,12 @@ def group():
             name=session["user"].get("name")
             conn = sqlite3.connect("database.db")
             cur = conn.cursor()
-            values=cur.execute(f"select * from employee_group_map")
-            conn.close()
+            values=cur.execute(f"select * from Employee_group_map")
+            
             list1=[]
             
             
-            for i in zip(values):
+            for i in values:
                 conn = sqlite3.connect("database.db")
                 cur = conn.cursor()
                 values1=cur.execute(f"select group_name from group_table where group_ID={i[1]}")
@@ -157,7 +159,7 @@ def group():
                 list1.append(data)
             print(list1)
             conn.close()
-            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
+            return render_template("group_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
 #for inserting
 # @app.route("/crud",methods=["POST","GET"])
 # def insert():
@@ -208,46 +210,99 @@ def edit(id):
         name=session["user"].get("name")
         return render_template("edit_colab.html", user=(name.split(" "))[0],list=data)
 @app.route("/edit/<group_id>/<emp_id>",methods=["POST","GET"])
-def edit(group_id,emp_id):
+def edit_group(group_id,emp_id):
     if not session.get("user"):
         session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
         return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
     else:
         print(id)
-        conn = sqlite3.connect("database.db")
-        cur=conn.cursor()
-        values=cur.execute(f"select * from Employee_group_map where Emp_ID={emp_id} and group_id={group_id}")
-        conn.close()
-        conn = sqlite3.connect("database.db")
-        cur=conn.cursor()
-        values=cur.execute(f"select * from  where Emp_ID={emp_id} and group_id={group_id}")
-        conn.close()
         conn = sqlite3.connect("database.db")
         cur=conn.cursor()
         values1=cur.execute(f"select group_name from group_table where group_id={group_id}")
-        conn.close()
+        
         for i in values1:
             group_name=i[0]
+        conn.close()
+        conn = sqlite3.connect("database.db")
+        cur=conn.cursor()
+        values=cur.execute(f"select * from Employee_group_map where Emp_ID={emp_id} and group_id={group_id}")
         for i in values:
             data={"EMP_ID":i[0],"Group_ID":i[1],"Group_name":group_name}
+        conn.close()
+       
+        
+        
         name=session["user"].get("name")
         return render_template("group_edit_colab.html", user=(name.split(" "))[0],list=data)
+@app.route("/update/<group_name>/<emp_id>/<group_id1>",methods=["POST","GET"])
+def update_group(group_name,emp_id,group_id1):
+    if request.method=="POST":
+        if not session.get("user"):
+            session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
+            return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
+        else:
+            conn = sqlite3.connect("database.db")
+            emp_id=request.form.get("Emp_ID")
+            group_name=request.form.get("group_name")
+            print("emp_id,group_name",group_name,emp_id)
+            name=session["user"].get("name")
+            cur = conn.cursor()
+            values=cur.execute(f"select group_id from group_table where group_name='{group_name}'")
 
-    
+            for i in values:
+                group_id=i[0]
+            print("group_id",group_id,values)
+            conn.close()
+            
+            conn = sqlite3.connect("database.db")
+            cur = conn.cursor()
+            print(f"""
+            update Employee_group_map
+            set emp_id={emp_id},
+                group_id={group_id}
+                where Emp_ID={emp_id} and group_id={group_id}""")
+            cur.execute(f"""
+            update Employee_group_map
+            set emp_id={emp_id},
+                group_id={group_id}
+                where Emp_ID={emp_id} and group_id={group_id1}""")
+            conn.commit()
+            conn.close()
+            
+            name=session["user"].get("name")
+            return redirect(url_for("group"))
+@app.route("/delete/<group_id>/<emp_id>",methods=["POST","GET"])
+def delete_group(group_id,emp_id):
     
 
     if not session.get("user"):
         session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
         return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
     else:
-        print(id)
         conn = sqlite3.connect("database.db")
         cur=conn.cursor()
-        values=cur.execute(f"select * from Employee where Emp_ID={id}")
-        for i in values:
-            data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
+        values=cur.execute(f"delete from employee_group_map where Emp_ID={emp_id} and group_id={group_id}")
+        conn.commit()
+        data=[]
         name=session["user"].get("name")
-        return render_template("edit_colab.html", user=(name.split(" "))[0],list=data)
+        return render_template("group_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="hidden")
+
+
+    
+    
+
+    # if not session.get("user"):
+    #     session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
+    #     return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
+    # else:
+    #     print(id)
+    #     conn = sqlite3.connect("database.db")
+    #     cur=conn.cursor()
+    #     values=cur.execute(f"select * from Employee where Emp_ID={id}")
+    #     for i in values:
+    #         data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
+    #     name=session["user"].get("name")
+    #     return render_template("edit_colab.html", user=(name.split(" "))[0],list=data)
 @app.route("/delete/<id>",methods=["POST","GET"])
 def delete(id):
     
@@ -304,7 +359,7 @@ def update(id):
             conn.commit()
             data=[]
             name=session["user"].get("name")
-            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="hidden")
+            return redirect(url_for("crud"))
             
 
 
@@ -347,8 +402,8 @@ def seuser():
                 return render_template("crud1_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="visible")
                 
 
-            name=session["user"].get("name")
-            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__)
+            # name=session["user"].get("name")
+            # return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__)
 
 
 
