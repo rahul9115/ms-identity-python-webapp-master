@@ -39,27 +39,17 @@ def search():
     return render_template("search_colab.html", user=(name.split(" "))[0], version=msal.__version__)
 @app.route("/crud",methods=["POST","GET"])
 def crud():
-    if not session.get("user"):
-       session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
-       return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
-    
-    name=session["user"].get("name")
-    data=[]
-    return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="hidden")
-#for inserting
-@app.route("/crud1",methods=["POST","GET"])
-def insert():
-    print("good work")
     if request.method=="POST":
-
+        print("in")
         if not session.get("user"):
             session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
             return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
             
             
         else:
+            
             conn = sqlite3.connect("database.db")
-            print("in")
+            
             emp_id=request.form.get("Emp_ID")
             fname=request.form.get("fname")
             lname=request.form.get("lname")
@@ -73,9 +63,63 @@ def insert():
             cur = conn.cursor()
             cur.execute(f"INSERT INTO Employee VALUES({emp_id},'{fname}','{lname}','{desig}','{email}',{mobile},'{address}','True','False',1)")
             conn.commit()
+            cur = conn.cursor()
+            values=cur.execute("select * from employee")
+            list1=[]
+            for i in values:
+                data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
+                list1.append(data)
+            conn.close()
             print("Executed")
-            data=[]
-            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="hidden")
+            
+            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="hidden")
+    else:   
+        if not session.get("user"):
+            session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
+            return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
+        else:
+            print("good work")
+            name=session["user"].get("name")
+            conn = sqlite3.connect("database.db")
+            cur = conn.cursor()
+            values=cur.execute("select * from employee")
+            list1=[]
+            for i in values:
+                data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
+                list1.append(data)
+            conn.close()
+            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="hidden")
+#for inserting
+# @app.route("/crud",methods=["POST","GET"])
+# def insert():
+#     print("good work")
+#     if request.method=="POST":
+
+#         if not session.get("user"):
+#             session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
+#             return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
+            
+            
+#         else:
+            
+#             conn = sqlite3.connect("database.db")
+#             print("in")
+#             emp_id=request.form.get("Emp_ID")
+#             fname=request.form.get("fname")
+#             lname=request.form.get("lname")
+#             desig=request.form.get("desig")
+#             email=request.form.get("email")
+#             mobile=request.form.get("mobile")
+#             address=request.form.get("address")
+#             gender=request.form.get("gender")
+#             print("gender,address",gender,address)
+#             name=session["user"].get("name")
+#             cur = conn.cursor()
+#             cur.execute(f"INSERT INTO Employee VALUES({emp_id},'{fname}','{lname}','{desig}','{email}',{mobile},'{address}','True','False',1)")
+#             conn.commit()
+#             print("Executed")
+#             data=[]
+#             return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="hidden")
         
 @app.route("/edit/<id>",methods=["POST","GET"])
 def edit(id):
@@ -181,7 +225,7 @@ def seuser():
 
                     print(data)
                     name=session["user"].get("name")
-                    return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="visible")
+                    return render_template("crud1_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="visible")
                     
             except:
                 
@@ -190,7 +234,7 @@ def seuser():
                 data=cur.fetchall()
                 name=session["user"].get("name")
                 
-                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="visible")
+                return render_template("crud1_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="visible")
                 
 
             name=session["user"].get("name")

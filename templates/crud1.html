@@ -19,7 +19,7 @@
       <!-- {% endwith %} -->
       
       <div class="card card-body">
-        <form action="/crud" method="POST">
+        <form action="{{ url_for('insert')}}" method="POST">
           <div class="form-group">
             <input type="number" class="form-control" name="Emp_ID" placeholder="Emp_ID">
           </div>
@@ -87,20 +87,20 @@
           </tr>
         </thead>
         <tbody>
-          {% for list1 in list %}
+          
           
           <tr>
             
-            <td>{{list1.EMP_ID}}</td>
-            <td>{{list1.first_name}}</td>
-            <td>{{list1.last_name}}</td>
-            <td>{{list1.designation}}</td>
-            <td>{{list1.email}}</td>
-            <td>{{list1.mobile}}</td>
-            <td>{{list1.address}}</td>
-            <td>{{list1.is_enabled}}</td>
-            <td>{{list1.is_admin}}</td>
-            <td>{{list1.pass_id}}</td>
+            <td>{{list.EMP_ID}}</td>
+            <td>{{list.first_name}}</td>
+            <td>{{list.last_name}}</td>
+            <td>{{list.designation}}</td>
+            <td>{{list.email}}</td>
+            <td>{{list.mobile}}</td>
+            <td>{{list.address}}</td>
+            <td>{{list.is_enabled}}</td>
+            <td>{{list.is_admin}}</td>
+            <td>{{list.pass_id}}</td>
            
            
             <td width="50%" style="visibility: {{ value }};" >
@@ -108,7 +108,7 @@
               <a href="/delete/{{list.EMP_ID}}" class="btn btn-danger btn-delete btn-sm">delete</a>
             </td>
           </tr>
-          {% endfor %}
+          
           
         </tbody>
       </table>
