@@ -122,14 +122,17 @@ def group():
             conn.close()
             conn = sqlite3.connect("database.db")
             cur = conn.cursor()
-            values=cur.execute(f"select * from employee_group_map")
+            values=cur.execute(f"select * from Employee_group_map")
             list1=[]
-            print("group_name: ",group_name)
             for i in values:
-                data={"EMP_ID":i[0],"Group_ID":i[1],"Group_name":group_name}
+                conn = sqlite3.connect("database.db")
+                cur = conn.cursor()
+                values1=cur.execute(f"select group_name from group_table where group_ID={i[1]}")
+                for j in values1:
+                    data={"EMP_ID":i[0],"Group_ID":i[1],"Group_name":j[0]}
+                conn.close()
                 list1.append(data)
-            print(data)
-            conn.commit()
+            print(list1)
             conn.close()
                      
             
@@ -256,11 +259,7 @@ def update_group(group_name,emp_id,group_id1):
             
             conn = sqlite3.connect("database.db")
             cur = conn.cursor()
-            print(f"""
-            update Employee_group_map
-            set emp_id={emp_id},
-                group_id={group_id}
-                where Emp_ID={emp_id} and group_id={group_id}""")
+            
             cur.execute(f"""
             update Employee_group_map
             set emp_id={emp_id},
