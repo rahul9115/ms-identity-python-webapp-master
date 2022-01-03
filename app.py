@@ -94,7 +94,7 @@ def crud():
             conn.close()
             return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
 @app.route("/group",methods=["POST","GET"])
-def crud():
+def group():
     if request.method=="POST":
         print("in")
         if not session.get("user"):
@@ -142,10 +142,18 @@ def crud():
             name=session["user"].get("name")
             conn = sqlite3.connect("database.db")
             cur = conn.cursor()
-            values=cur.execute("select * from employee")
+            values=cur.execute(f"select * from employee_group_map")
+            conn.close()
             list1=[]
-            for i in values:
-                data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
+            
+            
+            for i in zip(values):
+                conn = sqlite3.connect("database.db")
+                cur = conn.cursor()
+                values1=cur.execute(f"select group_name from group_table where group_ID={i[1]}")
+                for j in values1:
+                    data={"EMP_ID":i[0],"Group_ID":i[1],"Group_name":j[0]}
+                conn.close()
                 list1.append(data)
             print(list1)
             conn.close()
@@ -184,6 +192,47 @@ def crud():
         
 @app.route("/edit/<id>",methods=["POST","GET"])
 def edit(id):
+    
+    
+
+    if not session.get("user"):
+        session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
+        return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
+    else:
+        print(id)
+        conn = sqlite3.connect("database.db")
+        cur=conn.cursor()
+        values=cur.execute(f"select * from Employee where Emp_ID={id}")
+        for i in values:
+            data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
+        name=session["user"].get("name")
+        return render_template("edit_colab.html", user=(name.split(" "))[0],list=data)
+@app.route("/edit/<group_id>/<emp_id>",methods=["POST","GET"])
+def edit(group_id,emp_id):
+    if not session.get("user"):
+        session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
+        return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
+    else:
+        print(id)
+        conn = sqlite3.connect("database.db")
+        cur=conn.cursor()
+        values=cur.execute(f"select * from Employee_group_map where Emp_ID={emp_id} and group_id={group_id}")
+        conn.close()
+        conn = sqlite3.connect("database.db")
+        cur=conn.cursor()
+        values=cur.execute(f"select * from  where Emp_ID={emp_id} and group_id={group_id}")
+        conn.close()
+        conn = sqlite3.connect("database.db")
+        cur=conn.cursor()
+        values1=cur.execute(f"select group_name from group_table where group_id={group_id}")
+        conn.close()
+        for i in values1:
+            group_name=i[0]
+        for i in values:
+            data={"EMP_ID":i[0],"Group_ID":i[1],"Group_name":group_name}
+        name=session["user"].get("name")
+        return render_template("group_edit_colab.html", user=(name.split(" "))[0],list=data)
+
     
     
 
