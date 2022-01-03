@@ -10,7 +10,8 @@ CLIENT_SECRET = "LVl7Q~-P1_kpFg-~5MPxOwrfp0rY-WR4gBPER" # Placeholder - for use 
 # if not CLIENT_SECRET:
 #     raise ValueError("Need to define CLIENT_SECRET environment variable")
 
-AUTHORITY = "https://login.microsoftonline.com/ba88fdfb-05a0-4f42-ad4b-f0043822ac60"  # For multi-tenant app
+#AUTHORITY = "https://login.microsoftonline.com/ba88fdfb-05a0-4f42-ad4b-f0043822ac60"  # For multi-tenant app
+AUTHORITY = "https://login.microsoftonline.com/common"
 # AUTHORITY = "https://login.microsoftonline.com/Enter_the_Tenant_Name_Here"
 
 REDIRECT_PATH = "/getAToken"  # Used for forming an absolute URL to your redirect URI.
