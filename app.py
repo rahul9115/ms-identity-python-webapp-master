@@ -1,6 +1,6 @@
 import uuid
 import requests
-from flask import Flask, render_template, session, request, redirect, url_for
+from flask import Flask, render_template, session, request, redirect, url_for,flash
 from flask_session import Session  # https://pythonhosted.org/Flask-Session
 import msal
 import app_config
@@ -386,7 +386,10 @@ def seuser():
                         values=cur.execute(f"select * from Employee where Emp_ID={int(search)}")
                         if len(values.fetchall())==0:
                             raise "exception"
-
+                        con.close()
+                        con = sqlite3.connect("database.db")
+                        cur=con.cursor()
+                        values=cur.execute(f"select * from Employee where Emp_ID={int(search)}")
 
 
                         for i in values:
@@ -398,21 +401,36 @@ def seuser():
                         name=session["user"].get("name")
                         return render_template("crud1_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="visible")
                     except:
-                        print("inside")
+                        
                         return redirect(url_for("crud"))
 
                     
             except:
-                cur=con.cursor()
-                cur.execute(f"select * from Employee where email={search}")
-                data=cur.fetchall()
-                name=session["user"].get("name")
-                
-                return render_template("crud1_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="visible")
-                
+                try:
+                    print("in email")
+                    con = sqlite3.connect("database.db")
+                    cur=con.cursor()
+                    print(f"select * from Employee where email='{search}'")
+                    values=cur.execute(f"select * from Employee where email='{search}'")
+                    
+                    if len(values.fetchall())==0:
+                        raise "exception"
+                    con = sqlite3.connect("database.db")
+                    cur=con.cursor()
+                    print(f"select * from Employee where email='{search}'")
+                    values=cur.execute(f"select * from Employee where email='{search}'")
+                    for i in values:
+                        print("inside loop",i[0])       
+                            
+                        data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
+                    con.close()
+                    name=session["user"].get("name")
+                    print(data)
+                    return render_template("crud1_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="visible")
+                except:
+                    return redirect(url_for("crud"))
 
-            name=session["user"].get("name")
-            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__)
+           
             
 @app.route("/segroup",methods=["POST","GET"])
 def segroup():
@@ -450,53 +468,61 @@ def segroup():
                         name=session["user"].get("name")
                         return render_template("group_search.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
                     except:
-                        con = sqlite3.connect("database.db")
-                        cur=con.cursor()
-                        values=cur.execute(f"select * from Employee_group_map where group_ID={int(search)}")
-                        list1=[]
-                        for i in values:
-                            conn = sqlite3.connect("database.db")
-                            cur = conn.cursor()
-                            values1=cur.execute(f"select group_name from group_table where group_ID={i[1]}")
-                            for j in values1:
-                                data={"EMP_ID":i[0],"Group_ID":i[1],"Group_name":j[0]}
-                            conn.close()
-                            list1.append(data)
-                        
-                        con.close()
+                        try:
+                            con = sqlite3.connect("database.db")
+                            cur=con.cursor()
+                            values=cur.execute(f"select * from Employee_group_map where group_ID={int(search)}")
+                            list1=[]
+                            for i in values:
+                                conn = sqlite3.connect("database.db")
+                                cur = conn.cursor()
+                                values1=cur.execute(f"select group_name from group_table where group_ID={i[1]}")
+                                for j in values1:
+                                    data={"EMP_ID":i[0],"Group_ID":i[1],"Group_name":j[0]}
+                                conn.close()
+                                list1.append(data)
+                            
+                            con.close()
 
-                        print(data)
-                        name=session["user"].get("name")
-                        return render_template("group_search.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
+                            print(data)
+                            name=session["user"].get("name")
+                            return render_template("group_search.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
+                        except:
+                            
+                            return redirect(url_for("group"))
 
                     
             except:
-                
-                con = sqlite3.connect("database.db")
-                cur=con.cursor()
-                values=cur.execute(f"select group_id from group_table where group_name='{search}'")
-                group_id=0
-                for i in values:
-                    group_id=i[0]
-                con.close()
-                con = sqlite3.connect("database.db")
-                cur=con.cursor()
-                values=cur.execute(f"select * from Employee_group_map where group_ID={group_id}")
-                list1=[]
-                for i in values:
-                    conn = sqlite3.connect("database.db")
-                    cur = conn.cursor()
-                    values1=cur.execute(f"select group_name from group_table where group_ID={i[1]}")
-                    for j in values1:
-                        data={"EMP_ID":i[0],"Group_ID":i[1],"Group_name":j[0]}
-                    conn.close()
-                    list1.append(data)
-                
-                con.close()
+                try:
+                    con = sqlite3.connect("database.db")
+                    cur=con.cursor()
+                    values=cur.execute(f"select group_id from group_table where group_name='{search}'")
+                    if(len(values.fetchall())==0):
+                        raise "exception"
+                    group_id=0
+                    for i in values:
+                        group_id=i[0]
+                    con.close()
+                    con = sqlite3.connect("database.db")
+                    cur=con.cursor()
+                    values=cur.execute(f"select * from Employee_group_map where group_ID={group_id}")
+                    list1=[]
+                    for i in values:
+                        conn = sqlite3.connect("database.db")
+                        cur = conn.cursor()
+                        values1=cur.execute(f"select group_name from group_table where group_ID={i[1]}")
+                        for j in values1:
+                            data={"EMP_ID":i[0],"Group_ID":i[1],"Group_name":j[0]}
+                        conn.close()
+                        list1.append(data)
+                    
+                    con.close()
 
-                
-                name=session["user"].get("name")
-                return render_template("group_search.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
+                    
+                    name=session["user"].get("name")
+                    return render_template("group_search.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
+                except:
+                    return redirect(url_for("group"))
         
 
             
