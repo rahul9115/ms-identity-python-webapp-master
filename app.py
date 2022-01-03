@@ -21,16 +21,50 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 @app.route("/")
 def index():
+    session["admin"]=[True]
+    if not session.get("user") or session["admin"][0]==[False]:
+       session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
+       return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
+    else:
+        print("session_details",session["user"])
+        username=session["user"].get('preferred_username')
+        print("username",username)
+        con = sqlite3.connect("database.db")
+        cur=con.cursor()
+        session["admin"]=[False]
+        enabled=True
+        admin=False
+        values=cur.execute(f"select is_enabled,is_admin from Employee where email='{username}'")
+        for i in values:
+            print("this",i[0])
+            enabled=i[0]
+            admin=i[1]
+        con.close()
+        name=session["user"].get("name")
+        print(enabled,admin)
+        if(enabled==True and admin==True):
+            session['admin'][0]=True
+            
+            return render_template("after.html", user=(name.split(" "))[0], version=msal.__version__)
+        elif(enabled==True):
+            session["admin"][0]=False
+            return redirect(url_for("employee"))
+        else:
+            session["users"]=[]
+            session.clear() # Wipe out user and its token cache from session
+            print("This",url_for("index",_external=True))
+            return redirect(url_for("index"))
+@app.route("/search")
+def employee():
+    
     if not session.get("user"):
        session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
        return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
-    
     name=session["user"].get("name")
-    
-    return render_template("after.html", user=(name.split(" "))[0], version=msal.__version__)
+    return render_template("employee_colab.html", user=(name.split(" "))[0], version=msal.__version__)
 @app.route("/search")
 def search():
-    if not session.get("user"):
+    if not session.get("user") or session["admin"][0]==[False]:
        session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
        return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
     
@@ -41,7 +75,7 @@ def search():
 def crud():
     if request.method=="POST":
         print("in")
-        if not session.get("user"):
+        if not session.get("user") or session["admin"][0]==False:
             session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
             return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
             
@@ -77,7 +111,7 @@ def crud():
             
             return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
     else:   
-        if not session.get("user"):
+        if not session.get("user") or session["admin"][0]==False:
             session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
             return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
         else:
@@ -97,7 +131,7 @@ def crud():
 def group():
     if request.method=="POST":
         print("in")
-        if not session.get("user"):
+        if not session.get("user") or session["admin"][0]==False:
             session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
             return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
             
@@ -139,7 +173,7 @@ def group():
             
             return render_template("group_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
     else:   
-        if not session.get("user"):
+        if not session.get("user") or session["admin"][0]==False:
             session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
             return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
         else:
@@ -200,7 +234,7 @@ def edit(id):
     
     
 
-    if not session.get("user"):
+    if not session.get("user") or session["admin"][0]==False:
         session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
         return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
     else:
@@ -214,7 +248,7 @@ def edit(id):
         return render_template("edit_colab.html", user=(name.split(" "))[0],list=data)
 @app.route("/edit/<group_id>/<emp_id>",methods=["POST","GET"])
 def edit_group(group_id,emp_id):
-    if not session.get("user"):
+    if not session.get("user") or session["admin"][0]==False:
         session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
         return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
     else:
@@ -240,7 +274,7 @@ def edit_group(group_id,emp_id):
 @app.route("/update/<group_name>/<emp_id>/<group_id1>",methods=["POST","GET"])
 def update_group(group_name,emp_id,group_id1):
     if request.method=="POST":
-        if not session.get("user"):
+        if not session.get("user") or session["admin"][0]==False:
             session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
             return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
         else:
@@ -274,7 +308,7 @@ def update_group(group_name,emp_id,group_id1):
 def delete_group(group_id,emp_id):
     
 
-    if not session.get("user"):
+    if not session.get("user") or session["admin"][0]==False:
         session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
         return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
     else:
@@ -306,7 +340,7 @@ def delete_group(group_id,emp_id):
 def delete(id):
     
 
-    if not session.get("user"):
+    if not session.get("user") or session["admin"][0]==False:
         session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
         return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
     else:
@@ -320,7 +354,7 @@ def delete(id):
 @app.route("/update/<id>",methods=["POST","GET"])
 def update(id):
     if request.method=="POST":
-        if not session.get("user"):
+        if not session.get("user") or session["admin"][0]==False:
             session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
             return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
         else:
@@ -368,7 +402,7 @@ def update(id):
 def seuser():
     print("in")
     if request.method=="POST":
-        if not session.get("user"):
+        if not session.get("user") or session["admin"][0]==False:
             session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
             return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
         else:
@@ -436,7 +470,7 @@ def seuser():
 def segroup():
     print("in")
     if request.method=="POST":
-        if not session.get("user"):
+        if not session.get("user") or session["admin"][0]==False:
             session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
             return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
         else:
