@@ -403,7 +403,93 @@ def seuser():
 
             # name=session["user"].get("name")
             # return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__)
+            
+@app.route("/segroup",methods=["POST","GET"])
+def segroup():
+    print("in")
+    if request.method=="POST":
+        if not session.get("user"):
+            session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
+            return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
+        else:
+            
+            search=request.form.get("input")
+            search=search.strip()
+            print("search",search)
+            list1=[]
+            
+            try:
+                if(int(search)):
+                    try:
+                        con = sqlite3.connect("database.db")
+                        cur=con.cursor()
+                        values=cur.execute(f"select * from Employee_group_map where Emp_ID={int(search)}")
+                        list1=[]
+                        for i in values:
+                            conn = sqlite3.connect("database.db")
+                            cur = conn.cursor()
+                            values1=cur.execute(f"select group_name from group_table where group_ID={i[1]}")
+                            for j in values1:
+                                data={"EMP_ID":i[0],"Group_ID":i[1],"Group_name":j[0]}
+                            conn.close()
+                            list1.append(data)
+                        
+                        
+                        con.close()
+                        print(data)
+                        name=session["user"].get("name")
+                        return render_template("group_search.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
+                    except:
+                        con = sqlite3.connect("database.db")
+                        cur=con.cursor()
+                        values=cur.execute(f"select * from Employee_group_map where group_ID={int(search)}")
+                        list1=[]
+                        for i in values:
+                            conn = sqlite3.connect("database.db")
+                            cur = conn.cursor()
+                            values1=cur.execute(f"select group_name from group_table where group_ID={i[1]}")
+                            for j in values1:
+                                data={"EMP_ID":i[0],"Group_ID":i[1],"Group_name":j[0]}
+                            conn.close()
+                            list1.append(data)
+                        
+                        con.close()
 
+                        print(data)
+                        name=session["user"].get("name")
+                        return render_template("group_search.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
+
+                    
+            except:
+                
+                con = sqlite3.connect("database.db")
+                cur=con.cursor()
+                values=cur.execute(f"select group_id from group_table where group_name='{search}'")
+                group_id=0
+                for i in values:
+                    group_id=i[0]
+                con.close()
+                con = sqlite3.connect("database.db")
+                cur=con.cursor()
+                values=cur.execute(f"select * from Employee_group_map where group_ID={group_id}")
+                list1=[]
+                for i in values:
+                    conn = sqlite3.connect("database.db")
+                    cur = conn.cursor()
+                    values1=cur.execute(f"select group_name from group_table where group_ID={i[1]}")
+                    for j in values1:
+                        data={"EMP_ID":i[0],"Group_ID":i[1],"Group_name":j[0]}
+                    conn.close()
+                    list1.append(data)
+                
+                con.close()
+
+                
+                name=session["user"].get("name")
+                return render_template("group_search.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
+        
+
+            
 
 
 @app.route("/login")
