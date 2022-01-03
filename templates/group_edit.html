@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block body %}
+ 
+<div class="card card-body">
+    <form action="{{ url_for('insert')}}" method="POST">
+      <div class="form-group">
+        <input type="number" class="form-control" name="Emp_ID" placeholder="Emp_ID">
+      </div>
+      
+     
+
+      <div class="form-group">
+        <input type="number" class="form-control" name="group_id" placeholder="Email">
+      </div>
+      
+      <div class="form-group">
+        <select style="height: 40px;" name="group_name" class="form-control" required>
+          <option  disabled="disabled" selected="selected" >Choose group name</option>
+          <option>Infra</option>
+          <option>Cyber</option>
+          <option>Garage</option>
+          <option>CIS</option>
+      </select>
+      </div>
+      <div class="form-group">
+        <input type="text" class="form-control" name="address" placeholder="Address">
+      </div>
+
+      <div class="form-group">
+      <button type="submit" class="btn btn-primary btn-block">
+        Update
+      </button>
+      </div>
+    </form>
+  </div>
+</div>
+ 
+{% endblock %}
