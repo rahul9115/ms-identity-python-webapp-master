@@ -380,19 +380,26 @@ def seuser():
             data={"EMP_ID":0,"first_name":"","last_name":"","designation":"","email":"","mobile":0,"address":"","is_enabled":"","is_admin":"","pass_id":""}
             try:
                 if(int(search)):
-                    
-                    cur=con.cursor()
-                    values=cur.execute(f"select * from Employee where Emp_ID={int(search)}")
-                    
-                    for i in values:
-                        data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
+                    try:
+                        print("inside")
+                        cur=con.cursor()
+                        values=cur.execute(f"select * from Employee where Emp_ID={int(search)}")
+                        
+                        for i in values:
+                            print(len(i))
+                            if(len(i)==0):
+                                raise "exception"
+                            data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
 
-                    print(data)
-                    name=session["user"].get("name")
-                    return render_template("crud1_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="visible")
+                        print(data)
+                        name=session["user"].get("name")
+                        return render_template("crud1_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="visible")
+                    except:
+                        print("inside")
+                        return redirect(url_for("crud"))
+
                     
             except:
-                
                 cur=con.cursor()
                 cur.execute(f"select * from Employee where email={search}")
                 data=cur.fetchall()
@@ -401,8 +408,8 @@ def seuser():
                 return render_template("crud1_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="visible")
                 
 
-            # name=session["user"].get("name")
-            # return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__)
+            name=session["user"].get("name")
+            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__)
             
 @app.route("/segroup",methods=["POST","GET"])
 def segroup():
