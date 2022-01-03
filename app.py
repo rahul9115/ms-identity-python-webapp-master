@@ -372,7 +372,7 @@ def seuser():
             session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
             return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
         else:
-            con = sqlite3.connect("database.db")
+            
             search=request.form.get("input")
             search=search.strip()
             print("search",search)
@@ -381,17 +381,20 @@ def seuser():
             try:
                 if(int(search)):
                     try:
-                        print("inside")
+                        con = sqlite3.connect("database.db")
                         cur=con.cursor()
                         values=cur.execute(f"select * from Employee where Emp_ID={int(search)}")
-                        
-                        for i in values:
-                            print(len(i))
-                            if(len(i)==0):
-                                raise "exception"
-                            data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
+                        if len(values.fetchall())==0:
+                            raise "exception"
 
-                        print(data)
+
+
+                        for i in values:
+                            
+                           
+                            data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
+                        con.close()
+                        
                         name=session["user"].get("name")
                         return render_template("crud1_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="visible")
                     except:
