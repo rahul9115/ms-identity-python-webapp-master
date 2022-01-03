@@ -26,23 +26,18 @@
           
          
 
+          
+          
           <div class="form-group">
-            <input type="number" class="form-control" name="group_id" placeholder="Email">
-          </div>
-          <div class="form-group">
-            <input type="number" class="form-control" name="mobile" placeholder="Mobile">
-          </div>
-          <div class="form-group">
-            <select style="height: 40px;" name="gender" class="form-control" required>
-              <option  disabled="disabled" selected="selected" >Choose gender</option>
-              <option>Male</option>
-              <option>Female</option>
-              <option>Others</option>
+            <select style="height: 40px;" name="group_name" class="form-control" required>
+              <option  disabled="disabled" selected="selected" >Choose group</option>
+              <option>Infra</option>
+            <option>Cyber</option>
+            <option>Garage</option>
+            <option>CIS</option>
           </select>
           </div>
-          <div class="form-group">
-            <input type="text" class="form-control" name="address" placeholder="Address">
-          </div>
+         
 
           <div class="form-group">
           <button type="submit" class="btn btn-primary btn-block">
@@ -64,27 +59,20 @@
         </thead>
         <tbody>
           
-          
+            {% for list1 in list %}
           <tr>
             
-            <!-- <td>{{list.EMP_ID}}</td>
-            <td>{{list.first_name}}</td>
-            <td>{{list.last_name}}</td>
-            <td>{{list.designation}}</td>
-            <td>{{list.email}}</td>
-            <td>{{list.mobile}}</td>
-            <td>{{list.address}}</td>
-            <td>{{list.is_enabled}}</td>
-            <td>{{list.is_admin}}</td>
-            <td>{{list.pass_id}}</td> -->
-           
+            <td>{{list1.EMP_ID}}</td>
+            <td>{{list1.Group_ID}}</td>
+            <td>{{list.Group_name}}</td>
+            
            
             <td width="50%" style="visibility: {{ value }};" >
-              <a href="/edit/{{list.EMP_ID}}" class="btn btn-secondary btn-sm">edit</a>
-              <a href="/delete/{{list.EMP_ID}}" class="btn btn-danger btn-delete btn-sm">delete</a>
+              <a href="/edit/{{list1.Group_ID}}/{{list1.EMP_ID}}" class="btn btn-secondary btn-sm">edit</a>
+              <a href="/delete/{{list1.Group_ID}}/{{list1.EMP_ID}}" class="btn btn-danger btn-delete btn-sm">delete</a>
             </td>
           </tr>
-          
+          {% endfor %}
         </tbody>
       </table>
     </div>

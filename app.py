@@ -93,6 +93,63 @@ def crud():
             print(list1)
             conn.close()
             return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
+@app.route("/group",methods=["POST","GET"])
+def crud():
+    if request.method=="POST":
+        print("in")
+        if not session.get("user"):
+            session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
+            return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
+            
+            
+        else:
+            
+            conn = sqlite3.connect("database.db")
+            
+            emp_id=request.form.get("Emp_ID")
+            group_name=request.form.get("group_name")
+            print("emp_id,group_name",group_name,emp_id)
+            name=session["user"].get("name")
+            cur = conn.cursor()
+            values=cur.execute(f"select group_id from group_table where group_name={group_name}")
+            for i in values:
+                group_id=i[0]
+            con.close()
+            conn = sqlite3.connect("database.db")
+            cur = conn.cursor()
+            cur.execute(f"INSERT INTO Employee_group_map VALUES({emp_id},{group_id})")
+            conn.commit()
+            conn.close()
+            conn = sqlite3.connect("database.db")
+            cur = conn.cursor()
+            values=cur.execute(f"select * from employee_group_map")
+            list1=[]
+            for i in values:
+                data={"EMP_ID":i[0],"Group_ID":i[1],"Group_name":group_name}
+                list1.append(data)
+            conn.commit()
+            conn.close()
+                     
+            
+            
+            return render_template("group_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
+    else:   
+        if not session.get("user"):
+            session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
+            return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
+        else:
+            print("good work")
+            name=session["user"].get("name")
+            conn = sqlite3.connect("database.db")
+            cur = conn.cursor()
+            values=cur.execute("select * from employee")
+            list1=[]
+            for i in values:
+                data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
+                list1.append(data)
+            print(list1)
+            conn.close()
+            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
 #for inserting
 # @app.route("/crud",methods=["POST","GET"])
 # def insert():
