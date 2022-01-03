@@ -75,7 +75,7 @@ def insert():
             conn.commit()
             print("Executed")
             data=[]
-            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,lsit=data,value="hidden")
+            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="hidden")
         
 @app.route("/edit/<id>",methods=["POST","GET"])
 def edit(id):
@@ -108,7 +108,7 @@ def delete(id):
         conn.commit()
         data=[]
         name=session["user"].get("name")
-        return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,lsit=data,value="hidden")
+        return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="hidden")
 @app.route("/update/<id>",methods=["POST","GET"])
 def update(id):
     if request.method=="POST":
