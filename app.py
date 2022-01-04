@@ -290,7 +290,7 @@ def crud():
                 if(i[0]==email):
                     print("emp_value",i[0])
                     conn.close()
-                    return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="",emp="visible",emp_message="duplicate emp_id",em="visible",email_message1="Duplicate email")        
+                    return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="",emp="",emp_message="",em="visible",email_message1="Duplicate email")        
 
 
            
@@ -324,7 +324,7 @@ def crud():
                 msg.body = str(message)
                 mail.send(msg)
             #send_msg(email)
-            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="",emp="hidden",emp_message="")
+            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="",emp="hidden",emp_message="",em="hidden",email_message1="")
             
     else:   
         if not session.get("user") or session["admin"][0]==False:
@@ -342,7 +342,7 @@ def crud():
                 list1.append(data)
             print(list1)
             conn.close()
-        return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="",emp="hidden",emp_message="")
+        return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="",emp="hidden",emp_message="",em="hidden",email_message1="")
             
 @app.route("/group",methods=["POST","GET"])
 def group():
