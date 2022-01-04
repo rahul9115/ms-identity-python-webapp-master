@@ -338,7 +338,26 @@ def group():
                 list1.append(data)
             print(list1)
             conn.close()
-                     
+            conn = sqlite3.connect("database.db")
+            cur = conn.cursor()
+            values=cur.execute(f"select first_name,email from employee where emp_id={emp_id}")
+            for i in values:
+                fname=i[0]
+                email=i[1]
+            conn.commit()
+            conn.close()
+            with app.app_context():
+                message = f"""
+                Dear {fname}
+                You have been added to {group_name}.
+                ."""
+                
+                mail=Mail(app)
+                sender = 'bot091281@gmail.com'
+                #receiver = 'bot091281@gmail.com'
+                msg = Message(subject='SMTP e-mail test',sender=sender,recipients=[email])
+                msg.body = str(message)
+                mail.send(msg)         
             
             
             return render_template("group_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
