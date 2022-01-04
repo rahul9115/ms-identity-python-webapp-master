@@ -126,8 +126,10 @@ def raise1():
             print("cred",email,subject,description,emp_id)
             with app.app_context():
                 message = f"""
+
                 Subject: {subject}
                 Description: {description}
+                Request raised by folowing: 
                 Emp_Id:{emp_id}
                 """
                 mail=Mail(app)
