@@ -7,8 +7,7 @@ from flask_session import Session  # https://pythonhosted.org/Flask-Session
 import msal
 import app_config
 import sqlite3
-from PIL import Image
-import PIL
+from flask_mail import Mail, Message
 con=sqlite3.connect("database.db")
 def send_msg(receiver):
     port = 465
@@ -33,6 +32,14 @@ def send_msg(receiver):
 app = Flask(__name__)
 app.config.from_object(app_config)
 Session(app)
+app.config['SECRET_KEY'] = 'stadium'
+app.config["MAIL_SERVER"]='smtp.gmail.com'
+app.config["MAIL_PORT"]=465
+app.config["MAIL_USERNAME"]='bot091281@gmail.com' #input mail
+app.config['MAIL_PASSWORD']='Manoj@123' #change this before pushing to git
+app.config['MAIL_USE_TLS']=False
+app.config['MAIL_USE_SSL']=True
+
 
 # This section is needed for url_for("foo", _external=True) to automatically
 # generate http scheme when this sample is running on localhost,
@@ -207,6 +214,14 @@ def crud():
             conn.close()
             print("Executed")
             print(email)
+            with app.app_context():
+                message = "This is a test e-mail message."
+                mail=Mail(app)
+                sender = 'bot091281@gmail.com'
+                #receiver = 'bot091281@gmail.com'
+                msg = Message(subject='SMTP e-mail test',sender=sender,recipients=[email])
+                msg.body = str(message)
+                mail.send(msg)
             #send_msg(email)
             
             return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
