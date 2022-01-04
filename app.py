@@ -112,12 +112,11 @@ def raise1():
             con.close()
             con = sqlite3.connect("database.db")
             cur=con.cursor()
-            session["admin"]=[False]
-            enabled=True
-            admin=False
+            
             values=cur.execute(f"select email from Employee where is_admin='True'")
             email=0
             for i in values:
+                print("this",i)
                 email=i[0]
                 
             con.close()
@@ -246,6 +245,8 @@ def crud():
             mobile=request.form.get("mobile")
             address=request.form.get("address")
             gender=request.form.get("gender")
+            is_admin=request.form.get("admin")
+            enabled=request.form.get("enabled")
             
             
             image=request.files["image"]
@@ -255,7 +256,7 @@ def crud():
             print("image",image)
             name=session["user"].get("name")
             cur = conn.cursor()
-            cur.execute(f"INSERT INTO Employee VALUES({emp_id},'{fname}','{lname}','{desig}','{email}',{mobile},'{address}','True','False',1,'{image.filename}','{gender}')")
+            cur.execute(f"INSERT INTO Employee VALUES({emp_id},'{fname}','{lname}','{desig}','{email}',{mobile},'{address}','{enabled}','{is_admin}',1,'{image.filename}','{gender}')")
             conn.commit()
             conn.close()
             conn = sqlite3.connect("database.db")
@@ -432,7 +433,7 @@ def edit(id):
         cur=conn.cursor()
         values=cur.execute(f"select * from Employee where Emp_ID={id}")
         for i in values:
-            data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
+            data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9],"image":i[10],"gender":i[11]}
         name=session["user"].get("name")
         return render_template("edit_colab.html", user=(name.split(" "))[0],list=data)
 @app.route("/edit/<group_id>/<emp_id>",methods=["POST","GET"])
@@ -558,6 +559,10 @@ def update(id):
             mobile=request.form.get("mobile")
             address=request.form.get("address")
             gender=request.form.get("gender")
+            is_admin=request.form.get("admin")
+            enabled=request.form.get("enabled")
+            image=request.files["image"]
+            image.save(f"C:/Users/sudha/Downloads/ms-identity-python-webapp-master/static/img/{image.filename}") 
             print(f"""
             update Employee
             set emp_id={emp_id},
@@ -566,7 +571,11 @@ def update(id):
                 designation={desig},
                 email={email},
                 mobile={mobile},
-                address={address}
+                address={address},
+                is_admin={is_admin},
+                is_enabled={enabled},
+                gender={gender},
+                image={image.filename}
                 where Emp_ID={id}""")
             cur.execute(f"""
             update Employee
@@ -576,7 +585,11 @@ def update(id):
                 designation='{desig}',
                 email='{email}',
                 mobile='{mobile}',
-                address='{address}'
+                address='{address}',
+                is_admin={is_admin},
+                is_enabled={enabled},
+                gender={gender},
+                image={image.filename}
                 where Emp_ID={id};""")
             conn.commit()
             data=[]
