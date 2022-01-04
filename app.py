@@ -366,6 +366,7 @@ def group():
             conn = sqlite3.connect("database.db")
             
             emp_id=request.form.get("Emp_ID")
+
             group_name=request.form.get("group_name")
             print("emp_id,group_name",group_name,emp_id)
             name=session["user"].get("name")
@@ -373,6 +374,49 @@ def group():
             values=cur.execute(f"select group_id from group_table where group_name='{group_name}'")
             for i in values:
                 group_id=i[0]
+            print("group",group_id)
+            conn.close()
+            conn = sqlite3.connect("database.db")
+            cur = conn.cursor()
+            values=cur.execute(f"select emp_id from employee where emp_id={emp_id}")
+            if(len(values.fetchall())==0):
+                conn = sqlite3.connect("database.db")
+                cur = conn.cursor()
+                values=cur.execute(f"select * from Employee_group_map")
+                list1=[]
+                for i in values:
+                    conn = sqlite3.connect("database.db")
+                    cur = conn.cursor()
+                    values1=cur.execute(f"select group_name from group_table where group_ID={i[1]}")
+                    for j in values1:
+                        data={"EMP_ID":i[0],"Group_ID":i[1],"Group_name":j[0]}
+                    conn.close()
+                    list1.append(data)
+                print(list1)
+                conn.close()
+                return render_template("group_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",eg="visible;color:red",eg_message="The emp does not exist")
+            conn = sqlite3.connect("database.db")
+            cur = conn.cursor()
+            values=cur.execute(f"select emp_id,group_id from employee_group_map where emp_id={emp_id} and group_id={group_id}")
+            if(len(values.fetchall())==1):
+                conn = sqlite3.connect("database.db")
+                cur = conn.cursor()
+                values=cur.execute(f"select * from Employee_group_map")
+                list1=[]
+                for i in values:
+                    conn = sqlite3.connect("database.db")
+                    cur = conn.cursor()
+                    values1=cur.execute(f"select group_name from group_table where group_ID={i[1]}")
+                    for j in values1:
+                        data={"EMP_ID":i[0],"Group_ID":i[1],"Group_name":j[0]}
+                    conn.close()
+                    list1.append(data)
+                print(list1)
+                conn.close()
+                return render_template("group_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",eg="visible;color:red",eg_message="The combo is existing")
+
+
+            
             conn.close()
             conn = sqlite3.connect("database.db")
             cur = conn.cursor()
