@@ -254,7 +254,9 @@ def crud():
             mobile=request.form.get("mobile")
             
             address=request.form.get("address")
+            address=address.strip()
             gender=request.form.get("gender")
+
             is_admin=request.form.get("admin")
             enabled=request.form.get("enabled")
             image=request.files["image"]
@@ -287,7 +289,7 @@ def crud():
                 if(int(i[0])==int(emp_id)):
                     print("emp_value",i[0])
                     conn.close()
-                    return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="",emp="visible",emp_message="duplicate emp_id")
+                    return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="",emp="visible;color:red;",emp_message="duplicate emp_id")
             conn.close()
             conn = sqlite3.connect("database.db")
             cur = conn.cursor()
