@@ -282,17 +282,25 @@ def crud():
                     print("emp_value",i[0])
                     conn.close()
                     return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="",emp="visible",emp_message="duplicate emp_id")
-                    
+            conn.close()
+            conn = sqlite3.connect("database.db")
+            cur = conn.cursor()
+            values=cur.execute("select email from employee")
+            for i in values:
+                if(i[0]==email):
+                    print("emp_value",i[0])
+                    conn.close()
+                    return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="",emp="visible",emp_message="duplicate emp_id",em="visible",email_message1="Duplicate email")        
 
 
            
 
             if(b_email==False and b_number==False):
-                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="visible",me="visible",mobile_message="Please enter 10 digit mobile number",email_message="Please enter valid email",emp="hidden",emp_message="")
+                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="visible",me="visible",mobile_message="Please enter 10 digit mobile number",email_message="Please enter valid email",emp="hidden",emp_message="",em="hidden",email_message1="")
             elif b_number==False:
-                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="visble",me="hidden",mobile_message="Please enter 10 digit mobile number",email_message="",emp="hidden",emp_message="")
+                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="visble",me="hidden",mobile_message="Please enter 10 digit mobile number",email_message="",emp="hidden",emp_message="",em="hidden",email_message1="")
             elif b_email==False:
-                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="Please enter valid email",emp="hidden",emp_message="")
+                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="Please enter valid email",emp="hidden",emp_message="",em="hidden",email_message1="")
 
 
 
