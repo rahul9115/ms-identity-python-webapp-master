@@ -2,10 +2,13 @@ import uuid
 import requests
 import smtplib, ssl
 from flask import Flask, render_template, session, request, redirect, url_for,flash
+import flask
 from flask_session import Session  # https://pythonhosted.org/Flask-Session
 import msal
 import app_config
 import sqlite3
+from PIL import Image
+import PIL
 con=sqlite3.connect("database.db")
 def send_msg(receiver):
     port = 465
@@ -82,6 +85,7 @@ def employee():
        return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
     else:
         if session["admin"][0]==True:
+            file_name=""
             conn = sqlite3.connect("database.db")
             name=session["user"].get("name")
             cur = conn.cursor()
@@ -90,6 +94,8 @@ def employee():
             data={}
             for i in values:
                 data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
+                file_name=i[10]
+
             name=session["user"].get("name")
             conn.close()
             conn = sqlite3.connect("database.db")
@@ -109,16 +115,20 @@ def employee():
                     group_names.append(j[0])
 
 
-            return render_template("admin_colab.html", user=(name.split(" "))[0],list=data,group_names=group_names, version=msal.__version__)
+            return render_template("admin_colab.html", user=(name.split(" "))[0],list=data,group_names=group_names,file_name=file_name, version=msal.__version__)
         elif session["admin"][0]==False:
+            file_name=""
             conn = sqlite3.connect("database.db")
             name=session["user"].get("name")
             cur = conn.cursor()
             username=session["user"].get('preferred_username')
             values=cur.execute(f"select * from employee where email='{username}'")
             data={}
+            
             for i in values:
                 data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
+                file_name=i[10]
+            print("yo",file_name)
             name=session["user"].get("name")
             conn.close()
             conn = sqlite3.connect("database.db")
@@ -136,7 +146,12 @@ def employee():
                 value1=cur.execute(f"select group_name from group_table where group_id='{i[0]}'")
                 for j in value1:
                     group_names.append(j[0])
-            return render_template("employee_colab.html", user=(name.split(" "))[0],list=data,group_names=group_names, version=msal.__version__)
+                conn.close()
+            print(group_names)
+            conn.close()
+            str1="{"+f"{{ url_for('static',filename='/img/{file_name}') }}"+"}"
+            print(str1)
+            return render_template("employee_colab.html", user=(name.split(" "))[0],list=data,group_names=group_names,file_name=file_name, version=msal.__version__)
 
 @app.route("/search")
 def search():
@@ -169,10 +184,16 @@ def crud():
             mobile=request.form.get("mobile")
             address=request.form.get("address")
             gender=request.form.get("gender")
-            print("gender,address",gender,address)
+            
+            
+            image=request.files["image"]
+
+            
+            image.save(f"C:/Users/sudha/Downloads/ms-identity-python-webapp-master/static/img/{image.filename}") 
+            print("image",image)
             name=session["user"].get("name")
             cur = conn.cursor()
-            cur.execute(f"INSERT INTO Employee VALUES({emp_id},'{fname}','{lname}','{desig}','{email}',{mobile},'{address}','True','False',1)")
+            cur.execute(f"INSERT INTO Employee VALUES({emp_id},'{fname}','{lname}','{desig}','{email}',{mobile},'{address}','True','False',1,'{image.filename}','{gender}')")
             conn.commit()
             conn.close()
             conn = sqlite3.connect("database.db")
@@ -429,7 +450,7 @@ def delete(id):
         conn.commit()
         data=[]
         name=session["user"].get("name")
-        return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=data,value="hidden")
+        return redirect(url_for("crud"))
 @app.route("/update/<id>",methods=["POST","GET"])
 def update(id):
     if request.method=="POST":

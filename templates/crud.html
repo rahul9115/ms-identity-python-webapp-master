@@ -24,9 +24,9 @@
       <!-- {% endfor %} -->
       <!-- {% endif %} -->
       <!-- {% endwith %} -->
-      
+      <!-- enctype="multipart/form-data"> -->
       <div class="card card-body">
-        <form action="/crud" method="POST">
+        <form action="/crud" method="POST" enctype="multipart/form-data">
           <div class="form-group">
             <input type="number" class="form-control" name="Emp_ID" placeholder="Emp_ID">
           </div>
@@ -67,7 +67,9 @@
           <div class="form-group">
             <input type="text" class="form-control" name="address" placeholder="Address">
           </div>
-
+          <div class="form-group">
+            <input type="file" class="form-control" name="image" placeholder="Address" >
+          </div>
           <div class="form-group">
           <button type="submit" class="btn btn-primary btn-block">
             Save 
@@ -89,7 +91,7 @@
             <td>address</td>
             <td>Enabled</td>
             <td>Admin</td>
-            <td>pass_id</td>
+            
             <td>Action</td>
           </tr>
         </thead>
@@ -107,7 +109,7 @@
             <td>{{list1.address}}</td>
             <td>{{list1.is_enabled}}</td>
             <td>{{list1.is_admin}}</td>
-            <td>{{list1.pass_id}}</td>
+            
            
            
             <td width="50%" style="visibility: {{ value }};" >
