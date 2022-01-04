@@ -1,4 +1,5 @@
 import uuid
+import re
 import requests
 import smtplib, ssl
 from flask import Flask, render_template, session, request, redirect, url_for,flash
@@ -9,6 +10,7 @@ import app_config
 import sqlite3
 from flask_mail import Mail, Message
 con=sqlite3.connect("database.db")
+reg=r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 def send_msg(receiver):
     port = 465
     smtp_mail = "smtp.gmail.com"
@@ -249,18 +251,18 @@ def crud():
             gender=request.form.get("gender")
             is_admin=request.form.get("admin")
             enabled=request.form.get("enabled")
-            
-            
             image=request.files["image"]
-
-            
-            image.save(f"C:/Users/sudha/Downloads/ms-identity-python-webapp-master/static/img/{image.filename}") 
-            print("image",image)
             name=session["user"].get("name")
-            cur = conn.cursor()
-            cur.execute(f"INSERT INTO Employee VALUES({emp_id},'{fname}','{lname}','{desig}','{email}',{mobile},'{address}','{enabled}','{is_admin}',1,'{image.filename}','{gender}')")
-            conn.commit()
-            conn.close()
+            b_email=True
+            b_number=True
+            if(len(str(mobile))!=10):
+                b_email=False
+                
+                
+                
+            if(re.fullmatch(reg,email) is None):
+                b_number=False
+            
             conn = sqlite3.connect("database.db")
             cur = conn.cursor()
             values=cur.execute("select * from employee")
@@ -270,6 +272,25 @@ def crud():
                 data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
                 list1.append(data)
             conn.close()
+
+            if(b_email==False and b_number==False):
+                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="visible",me="visible",mobile_message="Please enter 10 digit mobile number",email_message="Please enter valid email")
+            elif b_number==False:
+                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="visble",me="hidden",mobile_message="Please enter 10 digit mobile number",email_message="")
+            elif b_email==False:
+                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="Please enter valid email")
+
+
+
+            
+            image.save(f"C:/Users/sudha/Downloads/ms-identity-python-webapp-master/static/img/{image.filename}") 
+            print("image",image)
+            
+            cur = conn.cursor()
+            cur.execute(f"INSERT INTO Employee VALUES({emp_id},'{fname}','{lname}','{desig}','{email}',{mobile},'{address}','{enabled}','{is_admin}',1,'{image.filename}','{gender}')")
+            conn.commit()
+            conn.close()
+            
             print("Executed")
             print(email)
             with app.app_context():
@@ -282,7 +303,7 @@ def crud():
                 mail.send(msg)
             #send_msg(email)
             
-            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
+            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden")
     else:   
         if not session.get("user") or session["admin"][0]==False:
             session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
@@ -299,7 +320,7 @@ def crud():
                 list1.append(data)
             print(list1)
             conn.close()
-            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
+            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="")
 @app.route("/group",methods=["POST","GET"])
 def group():
     if request.method=="POST":

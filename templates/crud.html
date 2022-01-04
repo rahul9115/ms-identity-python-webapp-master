@@ -28,17 +28,17 @@
       <div class="card card-body">
         <form action="/crud" method="POST" enctype="multipart/form-data">
           <div class="form-group">
-            <input type="number" class="form-control" name="Emp_ID" placeholder="Emp_ID">
+            <input type="number" class="form-control" name="Emp_ID" placeholder="Emp_ID" required>
           </div>
           <div class="form-group">
-            <input type="text" class="form-control" name="fname" placeholder="First name">
+            <input type="text" class="form-control" name="fname" placeholder="First name" required>
           </div>
           <div class="form-group">
-            <input type="text" class="form-control" name="lname" placeholder="Last Name">
+            <input type="text" class="form-control" name="lname" placeholder="Last Name" required>
           </div>
           <div class="form-group">
             
-            <select style="height: 40px;" name="desig" id="cars" class="form-control" aria-placeholder="Designation">
+            <select style="height: 40px;" name="desig" id="cars" class="form-control" aria-placeholder="Designation" required>
               <option disabled="disabled" selected="selected" >Choose Designation</option>    
               <option value="P1">P1</option>
               <option value="P2">P2</option>
@@ -51,10 +51,12 @@
           </div>
 
           <div class="form-group">
-            <input type="text" class="form-control" name="email" placeholder="Email">
+            <input type="text" class="form-control" name="email" placeholder="Email" required>
+            <label for="" style="visibility: {{me}};">{{email_message}}</label>
           </div>
           <div class="form-group">
-            <input type="number" class="form-control" name="mobile" placeholder="Mobile">
+            <input type="number" class="form-control" name="mobile" placeholder="Mobile" required>
+            <label for="" style="visibility: {{mv}};">{{mobile_message}}</label>
           </div>
           <div class="form-group">
             <select style="height: 40px;" name="gender" class="form-control" required>
@@ -81,10 +83,10 @@
           </select>
           </div>
           <div class="form-group">
-            <input type="text" class="form-control" name="address" placeholder="Address">
+            <input type="text" class="form-control" name="address" placeholder="Address" required>
           </div>
           <div class="form-group">
-            <input type="file" class="form-control" name="image" placeholder="Address" >
+            <input type="file" class="form-control" name="image" placeholder="Address" required>
           </div>
           <div class="form-group">
           <button type="submit" class="btn btn-primary btn-block">
