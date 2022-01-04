@@ -91,6 +91,51 @@ def request():
        return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
     else:
          return render_template("raise_colab.html")
+@app.route("/raise",methods=["POST","GET"])
+def raise1():
+    if request.method=="POST":
+        if not session.get("user") or session["admin"]==True:
+            session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
+            return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
+        else:
+            username=session["user"].get('preferred_username')
+            con = sqlite3.connect("database.db")
+            cur=con.cursor()
+            session["admin"]=[False]
+            enabled=True
+            admin=False
+            values=cur.execute(f"select emp_id from Employee where email='{username}'")
+            emp_id=0
+            for i in values:
+                emp_id=i[0]
+                
+            con.close()
+            con = sqlite3.connect("database.db")
+            cur=con.cursor()
+            session["admin"]=[False]
+            enabled=True
+            admin=False
+            values=cur.execute(f"select email from Employee where is_enabled='True'")
+            email=0
+            for i in values:
+                email=i[0]
+                
+            con.close()
+            subject=request.form.get("subject")
+            description=request.form.get("issue")
+            with app.app_context():
+                message = f"""
+                Subject: {subject}
+                Description: {description}
+                Emp_Id:{emp_id}
+                """
+                mail=Mail(app)
+                sender = 'bot091281@gmail.com'
+                #receiver = 'bot091281@gmail.com'
+                msg = Message(subject='SMTP e-mail test',sender=sender,recipients=[email])
+                msg.body = str(message)
+                mail.send(msg)
+            return render_template("raise_colab.html")
 @app.route("/search")
 def employee():
     

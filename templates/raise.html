@@ -27,11 +27,11 @@
 
 <div class="panel-body"><!-- panel-body Begin -->
 
-    <form method="post" class="form-horizontal" enctype="multipart/form-data"><!-- form-horizontal Begin -->
+    <form action="/raise" method="POST" class="form-horizontal" enctype="multipart/form-data"><!-- form-horizontal Begin -->
         <div  class="form-group">
     <div  class="col-md-6 control-label"><!-- form-group Begin -->
         Your subject: 
-        <input type="text" name="email"><br>
+        <input type="text" name="subject"><br>
         <br>
     </div>
     </div>
@@ -41,7 +41,7 @@
 
        <div class="col-md-6"><!-- col-md-6 Begin -->
             
-           <textarea name="Issue Description" cols="19" rows="6" class="form-control"></textarea>
+           <textarea name="issue" cols="19" rows="6" class="form-control"></textarea>
 
        </div><!-- col-md-6 Finish -->
 
