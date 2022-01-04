@@ -66,7 +66,7 @@ def index():
             session['admin'][0]=True
             
             return render_template("after.html", user=(name.split(" "))[0], version=msal.__version__)
-        elif(enabled==True):
+        elif(enabled=="True"):
             session["admin"][0]=False
             return redirect(url_for("employee"))
         else:
@@ -81,40 +81,70 @@ def employee():
        session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
        return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
     else:
-        conn = sqlite3.connect("database.db")
-        name=session["user"].get("name")
-        cur = conn.cursor()
-        username=session["user"].get('preferred_username')
-        values=cur.execute(f"select * from employee where email='{username}'")
-        data={}
-        for i in values:
-            data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
-        name=session["user"].get("name")
-        conn.close()
-        conn = sqlite3.connect("database.db")
-        name=session["user"].get("name")
-        cur = conn.cursor()
-        username=session["user"].get('preferred_username')
-        values=cur.execute(f"select group_id from employee_group_map where emp_id='{data.get('EMP_ID')}'")
-        group_names=[]
-        for i in values:
-            print(i)
-
+        if session["admin"][0]==True:
             conn = sqlite3.connect("database.db")
             name=session["user"].get("name")
             cur = conn.cursor()
-            value1=cur.execute(f"select group_name from group_table where group_id='{i[0]}'")
-            for j in value1:
-                group_names.append(j[0])
+            username=session["user"].get('preferred_username')
+            values=cur.execute(f"select * from employee where email='{username}'")
+            data={}
+            for i in values:
+                data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
+            name=session["user"].get("name")
+            conn.close()
+            conn = sqlite3.connect("database.db")
+            name=session["user"].get("name")
+            cur = conn.cursor()
+            username=session["user"].get('preferred_username')
+            values=cur.execute(f"select group_id from employee_group_map where emp_id='{data.get('EMP_ID')}'")
+            group_names=[]
+            for i in values:
+                print(i)
+
+                conn = sqlite3.connect("database.db")
+                name=session["user"].get("name")
+                cur = conn.cursor()
+                value1=cur.execute(f"select group_name from group_table where group_id='{i[0]}'")
+                for j in value1:
+                    group_names.append(j[0])
 
 
-        return render_template("employee_colab.html", user=(name.split(" "))[0],list=data,group_names=group_names, version=msal.__version__)
+            return render_template("admin_colab.html", user=(name.split(" "))[0],list=data,group_names=group_names, version=msal.__version__)
+        elif session["admin"][0]==False:
+            conn = sqlite3.connect("database.db")
+            name=session["user"].get("name")
+            cur = conn.cursor()
+            username=session["user"].get('preferred_username')
+            values=cur.execute(f"select * from employee where email='{username}'")
+            data={}
+            for i in values:
+                data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
+            name=session["user"].get("name")
+            conn.close()
+            conn = sqlite3.connect("database.db")
+            name=session["user"].get("name")
+            cur = conn.cursor()
+            username=session["user"].get('preferred_username')
+            values=cur.execute(f"select group_id from employee_group_map where emp_id='{data.get('EMP_ID')}'")
+            group_names=[]
+            for i in values:
+                print(i)
+
+                conn = sqlite3.connect("database.db")
+                name=session["user"].get("name")
+                cur = conn.cursor()
+                value1=cur.execute(f"select group_name from group_table where group_id='{i[0]}'")
+                for j in value1:
+                    group_names.append(j[0])
+            return render_template("employee_colab.html", user=(name.split(" "))[0],list=data,group_names=group_names, version=msal.__version__)
+
 @app.route("/search")
 def search():
     if not session.get("user") or session["admin"][0]==False:
        session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
        return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
     
+
     name=session["user"].get("name")
     
     return render_template("search_colab.html", user=(name.split(" "))[0], version=msal.__version__)
@@ -642,10 +672,10 @@ def logout():
     session["users"]=[]
     session.clear() # Wipe out user and its token cache from session
     print("This",url_for("index",_external=True))
-    return redirect(url_for("index"))
-    # return redirect(  # Also logout from your tenant's web session
-    #     app_config.AUTHORITY + "/oauth2/v2.0/logout" +
-    #     "?post_logout_redirect_uri=" + url_for("index", _external=True))
+    #return redirect(url_for("index"))
+    return redirect(  # Also logout from your tenant's web session
+        app_config.AUTHORITY + "/oauth2/v2.0/logout" +
+        "?post_logout_redirect_uri=" + url_for("index", _external=True))
     
 
 @app.route("/graphcall")
