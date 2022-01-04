@@ -5,13 +5,32 @@ from flask_session import Session  # https://pythonhosted.org/Flask-Session
 import msal
 import app_config
 import sqlite3
+
 con=sqlite3.connect("database.db")
 
 
 app = Flask(__name__)
 app.config.from_object(app_config)
 Session(app)
-
+def send_msg(sender, receiver, password):
+    port = 465
+    smtp_mail = "smtp.gmail.com"
+    
+    # sender = "testmailforpython1068@gmail.com"
+    # receiver = "testmailforpython1068@gmail.com"
+    # password = '10689218chai'
+    
+    message = """From: From Person <from@fromdomain.com>
+    To: To Person <to@todomain.com>
+    Subject: SMTP e-mail test
+    
+    This is a test e-mail message.
+    """
+    
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL(smtp_mail, port, context=context) as server:
+        server.login(sender, password)
+        server.sendmail(sender, receiver, message)
 # This section is needed for url_for("foo", _external=True) to automatically
 # generate http scheme when this sample is running on localhost,
 # and to generate https scheme when it is deployed behind reversed proxy.
@@ -41,8 +60,9 @@ def index():
             admin=i[1]
         con.close()
         name=session["user"].get("name")
-        print(enabled,admin)
-        if(enabled==True and admin==True):
+        print("why",enabled,admin)
+        if(enabled=="True" and admin=="True"):
+            print("inside very")
             session['admin'][0]=True
             
             return render_template("after.html", user=(name.split(" "))[0], version=msal.__version__)
@@ -64,7 +84,7 @@ def employee():
     return render_template("employee_colab.html", user=(name.split(" "))[0], version=msal.__version__)
 @app.route("/search")
 def search():
-    if not session.get("user") or session["admin"][0]==[False]:
+    if not session.get("user") or session["admin"][0]==False:
        session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
        return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
     
