@@ -10,13 +10,13 @@
 <body>
 <div class="row"><!-- row Begin -->
 
-    <div class="col-lg-12"><!-- col-lg-12 Begin -->
+    <div class="col-lg-20"><!-- col-lg-12 Begin -->
 
         <ol class="breadcrumb"><!-- breadcrumb Begin -->
 
             <li class="active"><!-- active Begin -->
 
-              <h1> Dashboard / Raise Request</h1>
+             
             </li><!-- active Finish -->
 
         </ol><!-- breadcrumb Finish -->
@@ -28,13 +28,19 @@
 <div class="panel-body"><!-- panel-body Begin -->
 
     <form method="post" class="form-horizontal" enctype="multipart/form-data"><!-- form-horizontal Begin -->
-
-    <div class="form-group"><!-- form-group Begin -->
-
-       <label class="col-md-3 control-label"> Issue Description </label>
+        <div  class="form-group">
+    <div  class="col-md-6 control-label"><!-- form-group Begin -->
+        Your subject: 
+        <input type="text" name="email"><br>
+        <br>
+    </div>
+    </div>
+   
+    <div  class="form-group">
+        <label class="col-md-3 control-label"> Issue Description </label>
 
        <div class="col-md-6"><!-- col-md-6 Begin -->
-
+            
            <textarea name="Issue Description" cols="19" rows="6" class="form-control"></textarea>
 
        </div><!-- col-md-6 Finish -->
@@ -60,284 +66,12 @@
 </body>
 </html>
 
-<form action="URL for profile" method="POST">
 
-Your name: <br>
-<input type="text" name="realname"><br>
-<br>
 
-Your subject: <br>
-<input type="text" name="email"><br>
-<br>
 
-Your comments/issue description: <br>
-<textarea name="comments" rows="15" cols="50"></textarea><br><br>
 
-<input type="submit" value="Submit">
+
 
 </form>
 
 
-<!DOCTYPE html>
-<html>
-<style>
-body {font-family: Arial, Helvetica, sans-serif;}
-* {box-sizing: border-box;}
-
-/* Set a style for all buttons */
-button {
-  background-color: #04AA6D;
-  color: white;
-  padding: 14px 20px;
-  margin: 8px 0;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-  opacity: 0.9;
-}
-
-button:hover {
-  opacity:1;
-}
-
-/* Float cancel and delete buttons and add an equal width */
-.cancelbtn, .deletebtn {
-  float: left;
-  width: 50%;
-}
-
-/* Add a color to the cancel button */
-.cancelbtn {
-  background-color: #ccc;
-  color: black;
-}
-
-/* Add a color to the delete button */
-.deletebtn {
-  background-color: #f44336;
-}
-
-/* Add padding and center-align text to the container */
-.container {
-  padding: 16px;
-  text-align: center;
-}
-
-/* The Modal (background) */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: #474e5d;
-  padding-top: 50px;
-}
-
-/* Modal Content/Box */
-.modal-content {
-  background-color: #fefefe;
-  margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
-  border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
-}
-
-/* Style the horizontal ruler */
-hr {
-  border: 1px solid #f1f1f1;
-  margin-bottom: 25px;
-}
-
-/* The Modal Close Button (x) */
-.close {
-  position: absolute;
-  right: 35px;
-  top: 15px;
-  font-size: 40px;
-  font-weight: bold;
-  color: #f1f1f1;
-}
-
-.close:hover,
-.close:focus {
-  color: #f44336;
-  cursor: pointer;
-}
-
-/* Clear floats */
-.clearfix::after {
-  content: "";
-  clear: both;
-  display: table;
-}
-
-/* Change styles for cancel button and delete button on extra small screens */
-@media screen and (max-width: 300px) {
-  .cancelbtn, .deletebtn {
-     width: 100%;
-  }
-}
-</style>
-<body>
-
-<h2>Delete Modal</h2>
-
-<button onclick="document.getElementById('id01').style.display='block'">Open Modal</button>
-
-<div id="id01" class="modal">
-  <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times</span>
-  <form class="modal-content" action="/action_page.php">
-    <div class="container">
-      <h1>Delete Account</h1>
-      <p>Are you sure you want to delete your account?</p>
-
-      <div class="clearfix">
-        <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
-        <button type="button" onclick="document.getElementById('id01').style.display='none'" class="deletebtn">Delete</button>
-      </div>
-    </div>
-  </form>
-</div>
-
-<script>
-// Get the modal
-var modal = document.getElementById('id01');
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-}
-</script>
-
-</body>
-</html>
-
-
-
-
-<?php
-
-    if(!isset($_SESSION['admin_email'])){
-
-        echo "<script>window.open('login.php','_self')</script>";
-
-    }else{
-
-?>
-
-<div class="row"><!-- row 1 begin -->
-    <div class="col-lg-12"><!-- col-lg-12 begin -->
-        <ol class="breadcrumb"><!-- breadcrumb begin -->
-            <li class="active"><!-- active begin -->
-
-                <i class="fa fa-dashboard"></i> Dashboard / View Employees
-
-            </li><!-- active finish -->
-        </ol><!-- breadcrumb finish -->
-    </div><!-- col-lg-12 finish -->
-</div><!-- row 1 finish -->
-
-<div class="row"><!-- row 2 begin -->
-    <div class="col-lg-12"><!-- col-lg-12 begin -->
-        <div class="panel panel-default"><!-- panel panel-default begin -->
-            <div class="panel-heading"><!-- panel-heading begin -->
-               <h3 class="panel-title"><!-- panel-title begin -->
-
-                   <i class="fa fa-users"></i>  View Employees
-
-               </h3><!-- panel-title finish -->
-            </div><!-- panel-heading finish -->
-
-            <div class="panel-body"><!-- panel-body begin -->
-                <div class="table-responsive"><!-- table-responsive begin -->
-                    <table class="table table-striped table-bordered table-hover"><!-- table table-striped table-bordered table-hover begin -->
-
-                        <thead><!-- thead begin -->
-                            <tr><!-- tr begin -->
-                                <th> Employee ID: </th>
-                                <th> Employee Name: </th>
-                                <th> Employee Image: </th>
-                                <th> Employee Designation: </th>
-                                <th> Employee Account status: </th>
-                                <th> edit Password: </th>
-                                <th> Delete Employee : </th>
-                                <th> Edit Employee Details: </th>
-                            </tr><!-- tr finish -->
-                        </thead><!-- thead finish -->
-
-                        <tbody><!-- tbody begin -->
-
-                            <?php
-
-                                $i=0;
-
-                                $get_emp = "select * from emp";
-
-                                $run_pro = mysqli_query($con,$get_pro);
-
-                                while($row_pro=mysqli_fetch_array($run_pro)){
-
-                                    $pemp_id = $row_pro['emp_id'];
-
-                                    $emp_title = $row_pro['emp_name'];
-
-                                    $emp_img1 = $row_pro['emp_img1'];
-
-                                    $emp_designation = $row_pro['emp_designation'];
-
-                                    $emp_date = $row_pro['emp_status'];
-
-                                    $i++;
-
-                            ?>
-
-                            <tr><!-- tr begin -->
-                                <td> <?php echo $i; ?> </td>
-                                <td> <?php echo $emp_name; ?> </td>
-                                <td> <img src="emp_images/<?php echo $emp_img1; ?>" width="60" height="60"></td>
-                                <td> <?php echo $emp_designation; ?> </td>
-                                <td> <?php
-
-
-
-                                     ?>
-                                </td>
-                                <td> <?php echo $emp_status ?> </td>
-                                <td>
-
-                                     <a href="index.php?delete_emp=<?php echo $emp_id; ?>">
-
-                                        <i class="fa fa-trash-o"></i> Delete
-
-                                     </a>
-
-                                </td>
-                                <td>
-
-                                     <a href="index.php?edit_emp=<?php echo $emp_id; ?>">
-
-                                        <i class="fa fa-pencil"></i> Edit
-
-                                     </a>
-
-                                </td>
-                            </tr><!-- tr finish -->
-
-                            <?php } ?>
-
-                        </tbody><!-- tbody finish -->
-
-                    </table><!-- table table-striped table-bordered table-hover finish -->
-                </div><!-- table-responsive finish -->
-            </div><!-- panel-body finish -->
-
-        </div><!-- panel panel-default finish -->
-    </div><!-- col-lg-12 finish -->
-</div><!-- row 2 finish -->
-
-<?php } ?> -->

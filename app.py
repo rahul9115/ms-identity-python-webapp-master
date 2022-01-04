@@ -84,6 +84,13 @@ def index():
             session.clear() # Wipe out user and its token cache from session
             print("This",url_for("index",_external=True))
             return redirect(url_for("index"))
+@app.route("/request")
+def request():
+    if not session.get("user") or session["admin"]==True:
+       session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
+       return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
+    else:
+         return render_template("raise_colab.html")
 @app.route("/search")
 def employee():
     
