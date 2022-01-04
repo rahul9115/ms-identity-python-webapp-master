@@ -1,24 +1,19 @@
 import uuid
 import requests
+import smtplib, ssl
 from flask import Flask, render_template, session, request, redirect, url_for,flash
 from flask_session import Session  # https://pythonhosted.org/Flask-Session
 import msal
 import app_config
 import sqlite3
-
 con=sqlite3.connect("database.db")
-
-
-app = Flask(__name__)
-app.config.from_object(app_config)
-Session(app)
-def send_msg(sender, receiver, password):
+def send_msg(receiver):
     port = 465
     smtp_mail = "smtp.gmail.com"
     
-    # sender = "testmailforpython1068@gmail.com"
+    sender = "testmailforpython1068@gmail.com"
     # receiver = "testmailforpython1068@gmail.com"
-    # password = '10689218chai'
+    password = '10689218chai'
     
     message = """From: From Person <from@fromdomain.com>
     To: To Person <to@todomain.com>
@@ -31,6 +26,11 @@ def send_msg(sender, receiver, password):
     with smtplib.SMTP_SSL(smtp_mail, port, context=context) as server:
         server.login(sender, password)
         server.sendmail(sender, receiver, message)
+
+app = Flask(__name__)
+app.config.from_object(app_config)
+Session(app)
+
 # This section is needed for url_for("foo", _external=True) to automatically
 # generate http scheme when this sample is running on localhost,
 # and to generate https scheme when it is deployed behind reversed proxy.
@@ -128,6 +128,8 @@ def crud():
                 list1.append(data)
             conn.close()
             print("Executed")
+            print(email)
+            send_msg(email)
             
             return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
     else:   
