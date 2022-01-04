@@ -255,6 +255,7 @@ def crud():
             name=session["user"].get("name")
             b_email=True
             b_number=True
+            b_emp_id=True
             if(len(str(mobile))!=10):
                 b_email=False
                 
@@ -285,7 +286,7 @@ def crud():
             
             image.save(f"C:/Users/sudha/Downloads/ms-identity-python-webapp-master/static/img/{image.filename}") 
             print("image",image)
-            
+            conn = sqlite3.connect("database.db")
             cur = conn.cursor()
             cur.execute(f"INSERT INTO Employee VALUES({emp_id},'{fname}','{lname}','{desig}','{email}',{mobile},'{address}','{enabled}','{is_admin}',1,'{image.filename}','{gender}')")
             conn.commit()
