@@ -152,11 +152,13 @@ def employee():
             cur = conn.cursor()
             username=session["user"].get('preferred_username')
             values=cur.execute(f"select * from employee where email='{username}'")
+            print("user",username)
             data={}
             for i in values:
+                print(i)
                 data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
                 file_name=i[10]
-
+            print("data",data)
             name=session["user"].get("name")
             conn.close()
             conn = sqlite3.connect("database.db")
@@ -433,7 +435,7 @@ def edit(id):
         cur=conn.cursor()
         values=cur.execute(f"select * from Employee where Emp_ID={id}")
         for i in values:
-            data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9],"image":i[10],"gender":i[11]}
+            data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"enabled":i[7],"admin":i[8],"pass_id":i[9],"image":i[10],"gender":i[11]}
         name=session["user"].get("name")
         return render_template("edit_colab.html", user=(name.split(" "))[0],list=data)
 @app.route("/edit/<group_id>/<emp_id>",methods=["POST","GET"])
@@ -572,10 +574,10 @@ def update(id):
                 email={email},
                 mobile={mobile},
                 address={address},
-                is_admin={is_admin},
-                is_enabled={enabled},
-                gender={gender},
-                image={image.filename}
+                is_admin='{is_admin}',
+                is_enabled='{enabled}',
+                gender='{gender}',
+                image='{image.filename}'
                 where Emp_ID={id}""")
             cur.execute(f"""
             update Employee
@@ -586,10 +588,10 @@ def update(id):
                 email='{email}',
                 mobile='{mobile}',
                 address='{address}',
-                is_admin={is_admin},
-                is_enabled={enabled},
-                gender={gender},
-                image={image.filename}
+                is_admin='{is_admin}',
+                is_enabled='{enabled}',
+                gender='{gender}',
+                image='{image.filename}'
                 where Emp_ID={id};""")
             conn.commit()
             data=[]
