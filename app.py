@@ -256,6 +256,7 @@ def crud():
             b_email=True
             b_number=True
             b_emp_id=True
+
             if(len(str(mobile))!=10):
                 b_email=False
                 
@@ -268,18 +269,30 @@ def crud():
             cur = conn.cursor()
             values=cur.execute("select * from employee")
             list1=[]
-
+            list1=[]
             for i in values:
                 data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
                 list1.append(data)
             conn.close()
+            conn = sqlite3.connect("database.db")
+            cur = conn.cursor()
+            values=cur.execute("select emp_id from employee")
+            for i in values:
+                if(int(i[0])==int(emp_id)):
+                    print("emp_value",i[0])
+                    conn.close()
+                    return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="",emp="visible",emp_message="duplicate emp_id")
+                    
+
+
+           
 
             if(b_email==False and b_number==False):
-                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="visible",me="visible",mobile_message="Please enter 10 digit mobile number",email_message="Please enter valid email")
+                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="visible",me="visible",mobile_message="Please enter 10 digit mobile number",email_message="Please enter valid email",emp="hidden",emp_message="")
             elif b_number==False:
-                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="visble",me="hidden",mobile_message="Please enter 10 digit mobile number",email_message="")
+                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="visble",me="hidden",mobile_message="Please enter 10 digit mobile number",email_message="",emp="hidden",emp_message="")
             elif b_email==False:
-                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="Please enter valid email")
+                return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="Please enter valid email",emp="hidden",emp_message="")
 
 
 
@@ -303,8 +316,8 @@ def crud():
                 msg.body = str(message)
                 mail.send(msg)
             #send_msg(email)
+            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="",emp="hidden",emp_message="")
             
-            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden")
     else:   
         if not session.get("user") or session["admin"][0]==False:
             session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
@@ -321,7 +334,8 @@ def crud():
                 list1.append(data)
             print(list1)
             conn.close()
-            return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="")
+        return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible",mv="hidden",me="visible",mobile_message="",email_message="",emp="hidden",emp_message="")
+            
 @app.route("/group",methods=["POST","GET"])
 def group():
     if request.method=="POST":
