@@ -10,10 +10,10 @@ con=sqlite3.connect("database.db")
 def send_msg(receiver):
     port = 465
     smtp_mail = "smtp.gmail.com"
-    
-    sender = "testmailforpython1068@gmail.com"
+    print("receive",receiver)
+    sender = "team6bot@gmail.com"
     # receiver = "testmailforpython1068@gmail.com"
-    password = '10689218chai'
+    password = 'Chaitanya@10685227'
     
     message = """From: From Person <from@fromdomain.com>
     To: To Person <to@todomain.com>
@@ -37,7 +37,7 @@ Session(app)
 # See also https://flask.palletsprojects.com/en/1.0.x/deploying/wsgi-standalone/#proxy-setups
 from werkzeug.middleware.proxy_fix import ProxyFix
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
-
+username=""
 @app.route("/")
 def index():
     session["admin"]=[True]
@@ -80,8 +80,35 @@ def employee():
     if not session.get("user"):
        session["flow"] = _build_auth_code_flow(scopes=app_config.SCOPE) 
        return render_template("login.html", auth_url=session["flow"]["auth_uri"], version=msal.__version__)
-    name=session["user"].get("name")
-    return render_template("employee_colab.html", user=(name.split(" "))[0], version=msal.__version__)
+    else:
+        conn = sqlite3.connect("database.db")
+        name=session["user"].get("name")
+        cur = conn.cursor()
+        username=session["user"].get('preferred_username')
+        values=cur.execute(f"select * from employee where email='{username}'")
+        data={}
+        for i in values:
+            data={"EMP_ID":i[0],"first_name":i[1],"last_name":i[2],"designation":i[3],"email":i[4],"mobile":i[5],"address":i[6],"is_enabled":i[7],"is_admin":i[8],"pass_id":i[9]}
+        name=session["user"].get("name")
+        conn.close()
+        conn = sqlite3.connect("database.db")
+        name=session["user"].get("name")
+        cur = conn.cursor()
+        username=session["user"].get('preferred_username')
+        values=cur.execute(f"select group_id from employee_group_map where emp_id='{data.get('EMP_ID')}'")
+        group_names=[]
+        for i in values:
+            print(i)
+
+            conn = sqlite3.connect("database.db")
+            name=session["user"].get("name")
+            cur = conn.cursor()
+            value1=cur.execute(f"select group_name from group_table where group_id='{i[0]}'")
+            for j in value1:
+                group_names.append(j[0])
+
+
+        return render_template("employee_colab.html", user=(name.split(" "))[0],list=data,group_names=group_names, version=msal.__version__)
 @app.route("/search")
 def search():
     if not session.get("user") or session["admin"][0]==False:
@@ -129,7 +156,7 @@ def crud():
             conn.close()
             print("Executed")
             print(email)
-            send_msg(email)
+            #send_msg(email)
             
             return render_template("crud_colab.html", user=(name.split(" "))[0], version=msal.__version__,list=list1,value="visible")
     else:   
