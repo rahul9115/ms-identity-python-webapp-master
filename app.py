@@ -242,11 +242,17 @@ def crud():
             conn = sqlite3.connect("database.db")
             
             emp_id=request.form.get("Emp_ID")
+            emp_id=emp_id.strip()
             fname=request.form.get("fname")
+            fname=fname.strip()
             lname=request.form.get("lname")
+            lname=lname.strip()
             desig=request.form.get("desig")
+            
             email=request.form.get("email")
+            email=email.strip()
             mobile=request.form.get("mobile")
+            
             address=request.form.get("address")
             gender=request.form.get("gender")
             is_admin=request.form.get("admin")
