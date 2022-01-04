@@ -215,7 +215,7 @@ def crud():
             print("Executed")
             print(email)
             with app.app_context():
-                message = "This is a test e-mail message."
+                message = "Admin has inserted your data."
                 mail=Mail(app)
                 sender = 'bot091281@gmail.com'
                 #receiver = 'bot091281@gmail.com'
