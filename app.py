@@ -115,7 +115,7 @@ def raise1():
             session["admin"]=[False]
             enabled=True
             admin=False
-            values=cur.execute(f"select email from Employee where is_enabled='True'")
+            values=cur.execute(f"select email from Employee where is_admin='True'")
             email=0
             for i in values:
                 email=i[0]
@@ -123,6 +123,7 @@ def raise1():
             con.close()
             subject=request.form.get("subject")
             description=request.form.get("issue")
+            print("cred",email,subject,description,emp_id)
             with app.app_context():
                 message = f"""
                 Subject: {subject}
