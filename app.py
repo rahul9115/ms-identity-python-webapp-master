@@ -85,7 +85,7 @@ def index():
             session["users"]=[]
             session.clear() # Wipe out user and its token cache from session
             print("This",url_for("index",_external=True))
-            return redirect(url_for("index"))
+            return redirect(url_for("logout"))
 @app.route("/request1")
 def request1():
     if not session.get("user") or session["admin"]==True:
